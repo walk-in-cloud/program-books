@@ -2324,7 +2324,8 @@ private void logError(Exception e) {
 <div class="page-anchor" id="page-151"></div><p><strong>3.13　小结</strong><br>每个系统都是使用某种领域特定语言搭建，而这种语言是程序员设计来描述那个系统的。函数是语言的动词，类是名词。这并非是退回到那种认为需求文档中的名词和动词就是系统中类和函数的最初设想的可怕的旧观念。其实这是个历史更久的真理。编程艺术是且一直就是语言设计的艺术。</p>
 <p>大师级程序员把系统当作故事来讲，而不是当作程序来写。他们使用选定编程语言提供的工具构建一种更为丰富且更具表达力的语言，用来讲那个故事。那种领域特定语言的一个部分，就是描述在系统中发生的各种行为的函数层级。在一种狡猾的递归操作中，这些行为使用它们定义的与领域紧密相关的语言讲述自己那个小故事。</p>
 <p>本章所讲述的是有关编写良好函数的机制。如果你遵循这些规则，函数就会短小，有个好名字，而且被很好地归置。不过永远别忘记，真正的目标在于讲述系统的故事，而你编写的函数必须干净利落地拼装到一起，形成一种精确而清晰的语言，帮助你讲故事。</p>
-<p><strong>3.14SetupTeardownIncluder程序</strong><br>代码清单3-7SetupTeardownIncluder.java</p>
+<p><strong>3.14 SetupTeardownIncluder程序</strong><br>代码清单3-7 SetupTeardownIncluder.java</p>
+<p><strong>3.14 SetupTeardownIncluder程序</strong><br>代码清单3-7 SetupTeardownIncluder.java</p>
 <pre class="code-block"><code class="language-java">package fitnesse.html;
 import fitnesse.responders.run.SuiteResponder;
 import fitnesse.wiki.*;
@@ -2404,8 +2405,7 @@ public class SetupTeardownIncluder {
     WikiPagePath pagePath = pageCrawler.getFullPath(page);
     return PathParser.render(pagePath);
   }
-  private void buildIncludeDirective(String pagePathName, String
-   arg) {
+  private void buildIncludeDirective(String pagePathName, String arg) {
     new PageContent
     .append("\n!include ")
     .append(arg)
@@ -2465,7 +2465,6 @@ private Locale saveLocale;
 <p>带有少量注释的整洁而有表达力的代码，要比带有大量注释的零碎而复杂的代码像样得多。与其花时间编写解释你搞出的糟糕的代码的注释，不如花时间清洁那堆糟糕的代码。</p>
 <div class="page-anchor" id="page-165"></div><p><strong>4.2　用代码来阐述</strong><br>有时，代码本身不足以解释其行为。不幸的是，许多程序员据此以为代码很少——如果有的话——能做好解释工作。这种观点纯属错误。你愿意看到这个：</p>
 <pre class="code-block"><code class="language-java">// Check to see if the employee is eligible for full benefits
-
 if ((employee.flags &amp; HOURLY_FLAG) &amp;&amp;
   (employee.age &gt; 65))</code></pre>
 <p>还是这个？</p>
@@ -2486,8 +2485,7 @@ protected abstract Responder responderInstance();</code></pre>
 <div class="page-anchor" id="page-167"></div>
 <p>下例稍好一些：</p>
 <pre class="code-block"><code class="language-java">// format matched kk:mm:ss EEE, MMM dd, yyyyPattern
- timeMatcher = Pattern.compile(
-"\\d*:\\d*:\\d* \\w*, \\w* \\d*, \\d*");</code></pre>
+ timeMatcher = Pattern.compile("\\d*:\\d*:\\d* \\w*, \\w* \\d*, \\d*");</code></pre>
 <p>在本例中，注释说明，该正则表达式意在匹配一个经由SimpleDateFormat.format函数利用特定格式字符串格式化的时间和日期。同样，如果把这段代码移到某个转换日期和时间格式的类中，就会更好、更清晰，而注释也就变得多此一举了。</p>
 <p><strong>4.3.3　对意图的解释</strong><br>有时，注释不仅提供了有关实现的有用信息，而且还提供了某个决定后面的意图。在下例中，我们看到注释反映出来的一个有趣决定。在对比两个对象时，作者决定将他的类放置在比其他东西更高的位置。</p>
 <pre class="code-block"><code class="language-java">public int compareTo(Object o) {
@@ -2537,8 +2535,8 @@ protected abstract Responder responderInstance();</code></pre>
 }</code></pre>
 <p>当然，这也会冒阐释性注释本身就不正确的风险。回头看看上例，你会发现想要确认注释的正确性有多难。这一方面说明了阐释有多必要，另外也说明了它有风险。所以，在写这类注释之前，考虑一下是否还有更好的办法，然后再加倍小心地确认注释正确性。</p>
 <div class="page-anchor" id="page-171"></div><p><strong>4.3.5　警示</strong><br>有时，用于警告其他程序员会出现某种后果的注释也是有用的。例如，下面的注释解释了为什么要关闭某个特定的测试用例：</p>
-<pre class="code-block"><code class="language-java">//Don'trununlessyou
-//havesometimetokill.
+<pre class="code-block"><code class="language-java">//Don't run unless you
+//have some time to kill.
 public void _testWithReallyBigFile() {
   writeLinesToFile(10000000);
   response.setBody(testFile);
@@ -2553,13 +2551,12 @@ public void _testWithReallyBigFile() {
 <pre class="code-block"><code class="language-java">public static SimpleDateFormat makeStandardHttpDateFormat() {
   //SimpleDateFormat is not thread safe,
   //so we need to create each instance independently.
-  SimpleDateFormat df = new SimpleDateFormat("EEE, dd MMM
-  yyyy HH:mm:ss z");
+  SimpleDateFormat df = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss z");
   df.setTimeZone(TimeZone.getTimeZone("GMT"));
   return df;
 }</code></pre>
 <p>你也许会抱怨说，还会有更好的解决方法。我大概会同意。不过上面的注释绝对有道理存在，它能阻止某位急切的程序员以效率之名使用静态初始器。</p>
-<p><strong>4.3.6TODO注释</strong><br>有时，有理由用//TODO形式在源代码中放置要做的工作列表。在下例中，TODO注释解释了为什么该函数的实现部分无所作为，将来应该是怎样。</p><div class="page-anchor" id="page-175"></div>
+<p><strong>4.3.6 TODO注释</strong><br>有时，有理由用//TODO形式在源代码中放置要做的工作列表。在下例中，TODO注释解释了为什么该函数的实现部分无所作为，将来应该是怎样。</p><div class="page-anchor" id="page-175"></div>
 <pre class="code-block"><code class="language-java">//TODO-MdM these are not needed
 //We expect this to go away when we do the checkout model
 protected VersionInfo makeVersion() throws Exception {
@@ -2596,8 +2593,7 @@ return buildList(text.substring(match.end()));</code></pre>
 <p>我们唯有检视系统其他部分的代码，弄清事情原委。任何迫使读者查看其他模块的注释，都没能与读者沟通好，不值所费。</p>
 <div class="page-anchor" id="page-179"></div><p><strong>4.4.2　多余的注释</strong><br>代码清单4-1展示的简单函数，其头部位置的注释全属多余。读这段注释花的时间没准比读代码花的时间还要长。</p>
 <p>代码清单4-1waitForClose</p>
-<pre class="code-block"><code class="language-java">// Utility method that returns when this.closed is true. Throws
-an exception
+<pre class="code-block"><code class="language-java">// Utility method that returns when this.closed is true. Throws an exception
 // if the timeout is reached.
 public synchronized void waitForClose(final long timeoutMillis) throws Exception {
  if (!closed) {
@@ -2687,10 +2683,8 @@ MBeanRegistration, Serializable {
 * @param author The author of the CD
 * @param tracks The number of tracks on the CD
 * @param durationInMinutes The duration of the CD in minutes
-
 */
-public void addCD(String title, String author,
-int tracks, int durationInMinutes) {
+public void addCD(String title, String author,int tracks, int durationInMinutes) {
   CD cd = new CD();
   cd.title = title;
   cd.author = author;
@@ -2733,7 +2727,6 @@ Updated the isInRange javadocs (DG);
 <p>很久以前，在模块开始处创建并维护这些记录还算有道理。那时，我们还没有源代码控制系统可用。如今，这种冗长的记录只会让模块变得凌乱不堪，应当全部删除。</p>
 <div class="page-anchor" id="page-188"></div><p><strong>4.4.6　废话注释</strong><br>有时，你会看到纯然是废话的注释。它们对于显然之事喋喋不休，毫无新意。</p>
 <pre class="code-block"><code class="language-java">/** Default constructor. */
-
 protected AnnualDateRule() {
 }</code></pre>
 <p>对吧？再看看这个：</p>
@@ -2808,8 +2801,7 @@ private String info;</code></pre>
 <p><strong>4.4.8　能用函数或变量时就别用注释</strong><br>看看以下代码概要：</p>
 <pre class="code-block"><code class="language-java">// does the module from the global list &lt;mod&gt; depend on the
 // subsystem we are part of?
-if (smodule.getDependSubsystems().contains(subSysMod.getSubS
-  ystem()))</code></pre>
+if (smodule.getDependSubsystems().contains(subSysMod.getSubSystem()))</code></pre>
 <p>可以改成以下没有注释的版本：</p>
 <pre class="code-block"><code class="language-java">ArrayList moduleDependees = smodule.getDependSubsystems();
 String ourSubSystem = subSysMod.getSubSystem();
@@ -2824,8 +2816,7 @@ if (moduleDependees.contains(ourSubSystem))</code></pre>
 <p>代码清单4-6wc.java</p>
 <pre class="code-block"><code class="language-java">public class wc {
   public static void main(String[] args) {
-    BufferedReader in = new BufferedReader(new InputStreamReader
-    (System.in));
+    BufferedReader in = new BufferedReader(new InputStreamReader (System.in));
     String line;
     int lineCount = 0;
     int charCount = 0;
@@ -2853,8 +2844,7 @@ if (moduleDependees.contains(ourSubSystem))</code></pre>
 <p>重申一下，源代码控制系统是这类信息最好的归属地。</p>
 <p><strong>4.4.12　注释掉的代码</strong><br>直接把代码注释掉是讨厌的做法。别这么干！</p>
 <pre class="code-block"><code class="language-java">InputStreamResponse response = new InputStreamResponse();
-response.setBody(formatter.getResultStream(), formatter.getByteCount
-());
+response.setBody(formatter.getResultStream(), formatter.getByteCount());
 //
 InputStream resultsStream = formatter.getResultStream();
 // StreamReader reader = new StreamReader(resultsStream);
@@ -2877,7 +2867,7 @@ else {
 return this.pngBytes;</code></pre>
 <div class="page-anchor" id="page-199"></div><p>这两行代码为什么要注释掉？它们重要吗？它们搁在那儿，是为了给未来的修改做提示吗？或者，只是某人在多年以前注释掉、懒得清理的过时玩意？</p>
 <p>20世纪60年代，曾经有那么一段时间，注释掉的代码可能有用。但我们已经拥有优良的源代码控制系统如此之久，这些系统可以为我们记住不要的代码。我们无需再用注释来标记，删掉即可，它们丢不了。我担保。</p>
-<p><strong>4.4.13HTML注释</strong><br>源代码注释中的HTML标记是一种厌物，如你在下面代码中所见。编辑器/IDE中的代码本来易于阅读，却因为HTML注释的存在而变得难以卒读。如果注释将由某种工具（例如Javadoc）抽取出来，呈现到网页，那么该是工具而非程序员来负责给注释加上合适的HTML标签。</p>
+<p><strong>4.4.13 HTML注释</strong><br>源代码注释中的HTML标记是一种厌物，如你在下面代码中所见。编辑器/IDE中的代码本来易于阅读，却因为HTML注释的存在而变得难以卒读。如果注释将由某种工具（例如Javadoc）抽取出来，呈现到网页，那么该是工具而非程序员来负责给注释加上合适的HTML标签。</p>
 <pre class="code-block"><code class="language-java">/**
 * Task to run fit tests.
 * This task runs fitnesse tests and publishes the results.
@@ -3124,10 +3114,7 @@ public class PrimeGenerator
 import java.util.regex.*;
 public class BoldWidget extends ParentWidget {
   public static final String REGEXP = "'''.+?'''";
-  private static final Pattern pattern = Pattern.compile("'''(
-  .+?)'''",
-  Pattern.MULTILINE + Pattern.DOTALL
-  );
+  private static final Pattern pattern = Pattern.compile("'''(.+?)'''",Pattern.MULTILINE + Pattern.DOTALL);
   public BoldWidget(ParentWidget parent, String text) throws Exception {
     super(parent);
     Matcher match = pattern.matcher(text);
@@ -3146,9 +3133,7 @@ public class BoldWidget extends ParentWidget {
 import java.util.regex.*;
 public class BoldWidget extends ParentWidget {
  public static final String REGEXP = "'''.+?'''";
- private static final Pattern pattern = Pattern.compile("'''(
- .+?)'''",
- Pattern.MULTILINE + Pattern.DOTALL);
+ private static final Pattern pattern = Pattern.compile("'''(.+?)'''",Pattern.MULTILINE + Pattern.DOTALL);
  public BoldWidget(ParentWidget parent, String text) throws Exception {
   super(parent);
   Matcher match = pattern.matcher(text);
@@ -3157,8 +3142,7 @@ public class BoldWidget extends ParentWidget {
   public String render() throws Exception {
    StringBuffer html = new StringBuffer("&lt;b&gt;");
    html.append(childHtml()).append("&lt;/b&gt;");
-   return html.toString();
-  }
+   return html.toString();}
  }</code></pre>
 <p>在你不特意注视时，后果就更严重了。在第一个例子中，代码组会跳到你眼中，而第二个例子就像一堆乱麻。两段代码的区别，展示了垂直方向上区隔的作用。</p>
 <div class="page-anchor" id="page-223"></div><p><strong>5.2.3　垂直方向上的靠近</strong><br>如果说空白行隔开了概念，靠近的代码行则暗示了它们之间的紧密关系。所以，紧密相关的代码应该互相靠近。注意代码清单5-3中的注释是如何割断两个实体变量间的联系的。</p>
@@ -3171,8 +3155,7 @@ public class BoldWidget extends ParentWidget {
   /**
   * The properties of the reporter listener
   */
-  private List&lt;Property&gt; m_properties = new ArrayList&lt;Property
-  &gt;();
+  private List&lt;Property&gt; m_properties = new ArrayList&lt;Property&gt;();
   public void addProperty(Property property) {
     m_properties.add(property);
   }</code></pre>
@@ -3181,8 +3164,7 @@ public class BoldWidget extends ParentWidget {
 <p>代码清单5-4</p>
 <pre class="code-block"><code class="language-java">public class ReporterConfig {
   private String m_className;
-  private List&lt;Property&gt; m_properties = new ArrayList&lt;Property
-  &gt;();
+  private List&lt;Property&gt; m_properties = new ArrayList&lt;Property&gt;();
   public void addProperty(Property property) {
     m_properties.add(property);
   }</code></pre>
@@ -3232,13 +3214,10 @@ for (XmlTest test : m_suite.getTests()) {
 <p>重点是在谁都知道的地方声明实体变量。大家都应该知道在哪儿能看到这些声明。</p>
 <p>例如JUnit 4.3.1中的这个奇怪情形。我极力删减了这个类，好说明问题。如果你看到代码清单大致一半的位置，会看到在那里声明了两个实体变量。如果放在更好的位置，它们就会更明显。而现在，读代码者只能在无意中看到这些声明（就像我一样）。</p>
 <pre class="code-block"><code class="language-java">public class TestSuite implements Test {
-  static public Test createTest(Class&lt;? extends TestCase&gt; theC
-  lass,
-  String name) {
+  static public Test createTest(Class&lt;? extends TestCase&gt; theClass,String name) {
     ...
   }
-  public static Constructor&lt;? extends TestCase&gt;
-  getTestConstructor(Class&lt;? extends TestCase&gt; theClass) throws NoSuchMethodException {
+  public static Constructor&lt;? extends TestCase&gt;getTestConstructor(Class&lt;? extends TestCase&gt; theClass) throws NoSuchMethodException {
     ...
   }
   public static Test warning(final String message) {
@@ -3254,8 +3233,7 @@ for (XmlTest test : m_suite.getTests()) {
   public TestSuite(final Class&lt;? extends TestCase&gt; theClass) {
     ...
   }
-  public TestSuite(Class&lt;? extends TestCase&gt;
-  theClass, String name) {
+  public TestSuite(Class&lt;? extends TestCase&gt;theClass, String name) {
     ...
   }
   ... ... ... ... ...
@@ -3267,8 +3245,7 @@ for (XmlTest test : m_suite.getTests()) {
   protected String pageTitle;
   protected Request request;
   protected PageCrawler crawler;
-  public Response makeResponse(FitNesseContext context, Request
-   request) throws Exception {
+  public Response makeResponse(FitNesseContext context, Request request) throws Exception {
     String pageName = getPageNameOrDefault(request, "FrontPage");
     loadPage(pageName, context);
     if (page == null)
@@ -3290,8 +3267,7 @@ for (XmlTest test : m_suite.getTests()) {
     if (page != null)
       pageData = page.getData();
   }
-  private Response notFoundResponse(FitNesseContext context, R
-  equest request) throws Exception {
+  private Response notFoundResponse(FitNesseContext context, Request request) throws Exception {
     return new NotFoundResponder().makeResponse(context, request
     );
   }
@@ -3350,8 +3326,7 @@ for (XmlTest test : m_suite.getTests()) {
     double determinant = determinant(a, b, c);
     return (-b - Math.sqrt(determinant)) / (2*a);
   }
-  private static double determinant(double a, double b, double
-  c) {
+  private static double determinant(double a, double b, double c) {
     return b*b - 4*a*c;
   }
 }</code></pre>
@@ -3481,8 +3456,7 @@ serve(Socket s, long requestTimeout) { try { FitNesseExpediter
     findJavaFiles(parentDirectory, files);
     return files;
   }
-  private static void findJavaFiles(File parentDirectory, List
-  &lt;File&gt; files) {
+  private static void findJavaFiles(File parentDirectory, List&lt;File&gt; files) {
     for (File file : parentDirectory.listFiles()) {
       if (file.getName().endsWith(".java"))
         files.add(file);
@@ -3491,8 +3465,7 @@ serve(Socket s, long requestTimeout) { try { FitNesseExpediter
     }
   }
   public void analyzeFile(File javaFile) throws Exception {
-    BufferedReader br = new BufferedReader(new FileReader(javaFile
-    ));
+    BufferedReader br = new BufferedReader(new FileReader(javaFile));
     String line;
     while ((line = br.readLine()) != null)
       measureLine(line);
@@ -3672,8 +3645,7 @@ public class Circle implements Shape {
 <p>由C的实体变量持有的对象。</p>
 <p>方法 <strong>不应</strong> 调用由任何函数返回的对象的方法。换言之，只跟朋友谈话，不与陌生人谈话。</p>
 <p>下列代码 [3] 违反了得墨忒耳律（除了违反其他规则之外），因为它调用了getOptions( )返回值的getScratchDir( )函数，又调用了getScratchDir( )返回值的getAbsolutePath( )方法。</p>
-<pre class="code-block"><code class="language-java">final String outputDir = ctxt.getOptions().getScratchDir().getAbsolutePath
-();</code></pre>
+<pre class="code-block"><code class="language-java">final String outputDir = ctxt.getOptions().getScratchDir().getAbsolutePath();</code></pre>
 <p><strong>6.3.1　火车失事</strong></p><div class="image-container"><img alt="图片" src="images/image_029.png"/></div><p>这类代码常被称作 <strong>火车失事</strong> ，因为它看起来就像是一列火车。这类连串的调用通常被认为是肮脏的风格，应该避免[G36]。最好做类似如下的切分：</p>
 <pre class="code-block"><code class="language-java">Options opts = ctxt.getOptions();
 File scratchDir = opts.getScratchDir();
@@ -3681,8 +3653,7 @@ final String outputDir = scratchDir.getAbsolutePath();</code></pre>
 <p>上列代码是否违反了得墨忒耳律呢？当然，模块知道ctxt对象包含有多个选项，每个选项中都有一个临时目录，而每个临时目录都有一个绝对路径。对于一个函数，这些知识真够丰富的。调用函数懂得如何在一大堆不同对象间浏览。</p>
 <p>这些代码是否违反得墨忒耳律，取决于ctxt、Options和ScratchDir是对象还是数据结构。如果是对象，则它们的内部结构应当隐藏而不曝露，而有关其内部细节的知识就明显违反了得墨忒耳律。如果ctxt、Options和ScratchDir只是数据结构，没有任何行为，则它们自然会曝露其内部结构，得墨忒耳律也就不适用了。</p>
 <p>属性访问器函数的使用把问题搞复杂了。如果像下面这样写代码，我们大概就不会提及对得墨忒耳律的违反。</p>
-<div class="page-anchor" id="page-273"></div><pre class="code-block"><code class="language-java">final String outputDir = ctxt.options.scratchDir.absolutePath
-;</code></pre>
+<div class="page-anchor" id="page-273"></div><pre class="code-block"><code class="language-java">final String outputDir = ctxt.options.scratchDir.absolutePath;</code></pre>
 <p>如果数据结构只简单地拥有公共变量，没有函数，而对象则拥有私有变量和公共函数，这个问题就不那么混淆。然而，有些框架和标准甚至要求最简单的数据结构都要有访问器和改值器。</p>
 <p><strong>6.3.2　混杂</strong><br>这种混淆有时会不幸导致混合结构，一半是对象，一半是数据结构。这种结构拥有执行操作的函数，也有公共变量或公共访问器及改值器。无论出于怎样的初衷，公共访问器及改值器都把私有变量公开化，诱导外部函数以过程式程序使用数据结构的方式使用这些变量 [4] 。</p>
 <p>此类混杂增加了添加新函数的难度，也增加了添加新数据结构的难度，两面不讨好。应避免创造这种结构。它们的出现，展示了一种乱七八糟的设计，其作者不确定——或者更糟糕，完全无视——他们是否需要函数或类型的保护。</p>
@@ -3692,17 +3663,15 @@ final String outputDir = scratchDir.getAbsolutePath();</code></pre>
 <pre class="code-block"><code class="language-java">ctx.getScratchDirectoryOption().getAbsolutePath()</code></pre>
 <p>第一种方案可能导致ctxt对象中方法的曝露。第二种方案是在假设getScratchDirectoryOption()返回一个数据结构而非对象。两种方案感觉都不好。</p>
 <p>如果ctxt是个对象，就应该要求它 <strong>做点什么</strong> ，不该要求它给出内部情形。那我们为何还要得到临时目录的绝对路径呢？我们要它做什么？来看看同一模块（许多行之后）的这段代码：</p>
-<pre class="code-block"><code class="language-java">String outFile = outputDir + "/" + className.replace('.', '/
-') + ".class";
+<pre class="code-block"><code class="language-java">String outFile = outputDir + "/" + className.replace('.', '/') + ".class";
 FileOutputStream fout = new FileOutputStream(outFile);
 BufferedOutputStream bos = new BufferedOutputStream(fout);</code></pre>
 <p>这种不同层级细节的混杂（[G34][G36]）有点麻烦。句点、斜杠、文件扩展名和File对象不该如此随便地混杂到一起。不过，撇开这些毛病，我们发现，取得临时目录绝对路径的初衷是为了创建指定名称的临时文件。</p>
 <div class="page-anchor" id="page-275"></div><p>所以，直接让ctxt对象来做这事如何？</p>
-<pre class="code-block"><code class="language-java">BufferedOutputStream bos = ctxt.createScratchFileStream(classFileName
-);</code></pre>
+<pre class="code-block"><code class="language-java">BufferedOutputStream bos = ctxt.createScratchFileStream(classFileName);</code></pre>
 <p>这下看起来像是个对象做的事了！ctxt隐藏了其内部结构，防止当前函数因浏览它不该知道的对象而违反得墨忒耳律。</p>
 <p><strong>6.4　数据传送对象</strong><br>最为精练的数据结构，是一个只有公共变量、没有函数的类。这种数据结构有时被称为数据传送对象，或DTO（Data Transfer Objects）。DTO是非常有用的结构，尤其是在与数据库通信、或解析套接字传递的消息之类场景中。在应用程序代码里一系列将原始数据转换为数据库的翻译过程中，它们往往是排头兵。</p>
-<p>更常见的是如代码清单6-7所示的“bean”结构。豆结构拥有由赋值器和取值器操作的私有变量。对豆结构的半封装会让某些OO纯化论者感觉舒服些，不过通常没有其他好处。</p>
+<p>更常见的是如代码清单6-7所示的“bean”结构。bean结构拥有由赋值器和取值器操作的私有变量。对bean结构的半封装会让某些OO纯化论者感觉舒服些，不过通常没有其他好处。</p>
 <p>代码清单6-7address.java</p>
 <pre class="code-block"><code class="language-java">public class Address {
   private String street;
@@ -3710,8 +3679,7 @@ BufferedOutputStream bos = new BufferedOutputStream(fout);</code></pre>
   private String city;
   private String state;
   private String zip;
-  public Address(String street, String streetExtra,
-  String city, String state, String zip) {
+  public Address(String street, String streetExtra,String city, String state, String zip) {
     this.street = street;
     this.streetExtra = streetExtra;
     this.city = city;
@@ -3734,7 +3702,7 @@ BufferedOutputStream bos = new BufferedOutputStream(fout);</code></pre>
     return zip;
   }
 }</code></pre>
-<p><strong>Active Record</strong><br>Active Record是一种特殊的DTO形式。它们是拥有公共（或可豆式访问的）变量的数据结构，但通常也会拥有类似save和find这样的可浏览方法。</p>
+<p><strong>Active Record</strong><br>Active Record是一种特殊的DTO形式。它们是拥有公共（或可bean式访问的）变量的数据结构，但通常也会拥有类似save和find这样的可浏览方法。</p>
 <div class="page-anchor" id="page-278"></div><p>Active Record一般是对数据库表或其他数据源的直接翻译。</p>
 <p>我们不幸经常发现开发者往这类数据结构中塞进业务规则方法，把这类数据结构当成对象来用。</p>
 <p>这是不智的行为，因为它导致了数据结构和对象的混杂体。</p>
