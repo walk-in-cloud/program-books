@@ -92,9 +92,10 @@
   }
 
   .toc-item.active {
-      background: #363636;
-      color: #4a9eff;
-      border-left-color: #4a9eff;
+      background: #3a3f4b;
+      color: #61afef;
+      border-left-color: #61afef;
+      font-weight: 600;
   }
 
   .toc-level-1 {
@@ -14878,12 +14879,7 @@ function toggleToc(el) {
     }
   }
 }
-// Expand first level by default
-document.addEventListener('DOMContentLoaded', function() {
-  document.querySelectorAll('.toc-branch > .toc-node > .toc-toggle').forEach(function(toggle) {
-    toggle.click();
-  });
-});
+// TOC starts collapsed by default — branches are manually expanded by the user
 </script>
 </body>
 </html>
