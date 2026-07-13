@@ -4018,9 +4018,7 @@ public void testLogAddAppender() {
 public void testLogAddAppender() {
   Logger logger = Logger.getLogger("MyLogger");
   logger.removeAllAppenders();
-  logger.addAppender(new ConsoleAppender(
-  new PatternLayout("%p %t %m%n"),
-  ConsoleAppender.SYSTEM_OUT));
+  logger.addAppender(new ConsoleAppender(new PatternLayout("%p %t %m%n"),ConsoleAppender.SYSTEM_OUT));
   logger.info("hello");
 }</code></pre>
 <p>这回行了；hello字样的日志信息出现在控制台上！必须告知ConsoleAppender，让它往控制台写字，看起来有点奇怪。</p>
@@ -4043,15 +4041,12 @@ public void testLogAddAppender() {
   }
   @Test
   public void addAppenderWithStream() {
-    logger.addAppender(new ConsoleAppender(
-    new PatternLayout("%p %t %m%n"),
-    ConsoleAppender.SYSTEM_OUT));
+    logger.addAppender(new ConsoleAppender(new PatternLayout("%p %t %m%n"),ConsoleAppender.SYSTEM_OUT));
     logger.info("addAppenderWithStream");
   }
   @Test
   public void addAppenderWithoutStream() {
-    logger.addAppender(new ConsoleAppender(
-    new PatternLayout("%p %t %m%n")));
+    logger.addAppender(new ConsoleAppender(new PatternLayout("%p %t %m%n")));
     logger.info("addAppenderWithoutStream");
   }
 }</code></pre>
@@ -4123,31 +4118,26 @@ public void testLogAddAppender() {
   request.setResource("root");
   request.addInput("type", "pages");
   Responder responder = new SerializedPageResponder();
-  SimpleResponse response = (SimpleResponse) responder.makeResponse(
-  new FitNesseContext(root), request);
+  SimpleResponse response = (SimpleResponse) responder.makeResponse(new FitNesseContext(root), request);
   String xml = response.getContent();
   assertEquals("text/xml", response.getContentType());
   assertSubString("&lt;name&gt;PageOne&lt;/name&gt;", xml);
   assertSubString("&lt;name&gt;PageTwo&lt;/name&gt;", xml);
   assertSubString("&lt;name&gt;ChildOne&lt;/name&gt;", xml);
 }
-public void testGetPageHieratchyAsXmlDoesntContainSymbolicLinks
-() throws Exception {
-  WikiPage pageOne = crawler.addPage(root, PathParser.parse("P
-  ageOne"));
+public void testGetPageHieratchyAsXmlDoesntContainSymbolicLinks() throws Exception {
+  WikiPage pageOne = crawler.addPage(root, PathParser.parse("PageOne"));
   crawler.addPage(root, PathParser.parse("PageOne.ChildOne"));
   crawler.addPage(root, PathParser.parse("PageTwo"));
   PageData data = pageOne.getData();
   WikiPageProperties properties = data.getProperties();
-  WikiPageProperty symLinks = properties.set(SymbolicPage.PROPERTY_NAME
-  );
+  WikiPageProperty symLinks = properties.set(SymbolicPage.PROPERTY_NAME);
   symLinks.set("SymPage", "PageTwo");
   pageOne.commit(data);
   request.setResource("root");
   request.addInput("type", "pages");
   Responder responder = new SerializedPageResponder();
-  SimpleResponse response = (SimpleResponse) responder.makeResponse(
-  new FitNesseContext(root), request);
+  SimpleResponse response = (SimpleResponse) responder.makeResponse(new FitNesseContext(root), request);
   String xml = response.getContent();
   assertEquals("text/xml", response.getContentType());
   assertSubString("&lt;name&gt;PageOne&lt;/name&gt;", xml);
@@ -4155,14 +4145,11 @@ public void testGetPageHieratchyAsXmlDoesntContainSymbolicLinks
   assertSubString("&lt;name&gt;ChildOne&lt;/name&gt;", xml);
   assertNotSubString("SymPage", xml);
 }
-public void testGetDataAsHtml() throws Exception {
-  crawler.addPage(root, PathParser.parse("TestPageOne"), "testpage
-  ");
+public void testGetDataAsHtml() throws Exception {crawler.addPage(root, PathParser.parse("TestPageOne"), "testpage");
   request.setResource("TestPageOne");
   request.addInput("type", "data");
   Responder responder = new SerializedPageResponder();
-  SimpleResponse response = (SimpleResponse) responder.makeResponse(
-  new FitNesseContext(root), request);
+  SimpleResponse response = (SimpleResponse) responder.makeResponse(new FitNesseContext(root), request);
   String xml = response.getContent();
   assertEquals("text/xml", response.getContentType());
   assertSubString("test page", xml);
@@ -4313,7 +4300,7 @@ public void testAddMonths() {
 <div class="page-anchor" id="page-344"></div><p>这样一来，你可以看到，在这些混杂的测试当中，隐藏有一条普遍规则。增加月份数时，日期不能大于该月份的最末一天。这意味着在2月28日增加月份数，就会得到3月28日。而这个测试应该有用，但被遗漏了。</p>
 <p>并非是代码清单9-8中每个段落的多重断言导致问题。问题在于，有多个概念被测试，所以，最佳规则也许是应该尽可能减少每个概念的断言数量，每个测试函数只测试一个概念。</p>
 <p><strong> [9]</strong></p>
-<p><strong>9.5F.I.R.S.T.</strong></p>
+<p><strong>9.5 F.I.R.S.T.</strong></p>
 <p>整洁的测试还遵循以下5条规则，这5条规则的首字母构成了本节标题：</p>
 <p><strong>快速</strong> （Fast）　测试应该够快。测试应该能快速运行。测试运行缓慢，你就不会想要频繁地运行它。如果你不频繁运行测试，就不能尽早发现问题，也无法轻易修正，从而也不能轻而易举地清理代码。最终，代码就会腐坏。</p>
 <p><strong>独立</strong> （Independent）　测试应该相互独立。某个测试不应为下一个测试设定条件。你应该可以单独运行每个测试，及以任何顺序运行测试。当测试互相依赖时，头一个没通过就会导致一连串的测试失败，使问题诊断变得困难，隐藏了下级错误。</p>
@@ -4321,7 +4308,7 @@ public void testAddMonths() {
 <p><strong>可重复</strong> （Repeatable）　测试应当可在任何环境中重复通过。你应该能够在生产环境、质检环境中运行测试，也能够在无网络的列车上用笔记本电脑运行测试。如果测试不能在任意环境中重复，你就总会有个解释其失败的接口。当环境条件不具备时，你也会无法运行测试。</p>
 <p><strong>自足验证</strong> （Self-Validating）　测试应该有布尔值输出。无论是通过或失败，你不应该查看日志文件来确认测试是否通过。你不应该手工对比两个不同文本文件来确认测试是否通过。如果测试不能自足验证，对失败的判断就会变得依赖主观，而运行测试也需要更长的手工操作时间。</p>
 <p><strong>及时</strong> （Timely）　测试应及时编写。单元测试应该恰好在使其通过的生产代码之前编写。如果在编写生产代码之后编写测试，你会发现生产代码难以测试。你可能会认为某些生产代码本身难以测试。你可能不会去设计可测试的代码。</p>
-<p><strong>9.6　小结</strong><br>我们只是触及了这个话题的表面。实际上，我认为应该为整洁的测试写上一整本书。对于项目的健康度，测试盒生产代码同等重要。或许测试更为重要，因为它保证和增强了生产代码的可扩展性、可维护性和可复用性。所以，保持测试整洁吧。让测试具有表达力并短小精悍。发明作为面向特定领域语言的测试API，帮助自己编写测试。</p>
+<p><strong>9.6　小结</strong><br>我们只是触及了这个话题的表面。实际上，我认为应该为整洁的测试写上一整本书。对于项目的健康度，测试和生产代码同等重要。或许测试更为重要，因为它保证和增强了生产代码的可扩展性、可维护性和可复用性。所以，保持测试整洁吧。让测试具有表达力并短小精悍。发明作为面向特定领域语言的测试API，帮助自己编写测试。</p>
 <div class="page-anchor" id="page-346"></div>
 <p>如果你坐视测试腐坏，那么代码也会跟着腐坏。</p>
 <p>保持测试整洁吧。</p>
@@ -4568,9 +4555,7 @@ public class PrimePrinter {
     final int COLUMNS_PER_PAGE = 4;
     RowColumnPagePrinter tablePrinter = new RowColumnPagePrinter(ROWS_PER_PAGE,
     COLUMNS_PER_PAGE,
-    "The First " + NUMBER_OF_PRIME
-    S +
-    " Prime Numbers");
+    "The First " + NUMBER_OF_PRIMES +" Prime Numbers");
     tablePrinter.print(primes);
   }
 }</code></pre>
@@ -4583,9 +4568,7 @@ public class RowColumnPagePrinter {
   private int numbersPerPage;
   private String pageHeader;
   private PrintStream printStream;
-  public RowColumnPagePrinter(int rowsPerPage,
-  int columnsPerPage,
-  String pageHeader) {
+  public RowColumnPagePrinter(int rowsPerPage,int columnsPerPage,String pageHeader) {
     this.rowsPerPage = rowsPerPage;
     this.columnsPerPage = columnsPerPage;
     this.pageHeader = pageHeader;
@@ -4594,9 +4577,7 @@ public class RowColumnPagePrinter {
   }
   public void print(int data[]) {
     int pageNumber = 1;
-    for (int firstIndexOnPage = 0;
-    firstIndexOnPage &lt; data.length;
-    firstIndexOnPage += numbersPerPage) {
+    for (int firstIndexOnPage = 0;firstIndexOnPage &lt; data.length;firstIndexOnPage += numbersPerPage) {
       int lastIndexOnPage = Math.min(firstIndexOnPage + numbersPerPage - 1,
       data.length - 1);
       printPageHeader(pageHeader, pageNumber);
@@ -4605,9 +4586,7 @@ public class RowColumnPagePrinter {
       pageNumber++;
     }
   }
-  private void printPage(int firstIndexOnPage,
-  int lastIndexOnPage,
-  int[] data) {
+  private void printPage(int firstIndexOnPage,int lastIndexOnPage,int[] data) {
     int firstIndexOfLastRowOnPage = firstIndexOnPage + rowsPerPage - 1;
     for (int firstIndexInRow = firstIndexOnPage;
     firstIndexInRow &lt;= firstIndexOfLastRowOnPage;
@@ -4616,17 +4595,14 @@ public class RowColumnPagePrinter {
       printStream.println("");
     }
   }
-  private void printRow(int firstIndexInRow,
-  int lastIndexOnPage,
-  int[] data) {
+  private void printRow(int firstIndexInRow,int lastIndexOnPage,int[] data) {
     for (int column = 0; column &lt; columnsPerPage; column++) {
       int index = firstIndexInRow + column * rowsPerPage;
       if (index &lt;= lastIndexOnPage)
         printStream.format("%10d", data[index]);
     }
   }
-  private void printPageHeader(String pageHeader,
-  int pageNumber) {
+  private void printPageHeader(String pageHeader,int pageNumber) {
     printStream.println(pageHeader + " ---
     Page " + pageNumber);
     printStream.println("");
@@ -4662,38 +4638,28 @@ public class PrimeGenerator {
     }
   }
   private static boolean isPrime(int candidate) {
-    if (isLeastRelevantMultipleOfNextLargerPrimeFactor(candidate
-      )) {
+    if (isLeastRelevantMultipleOfNextLargerPrimeFactor(candidate)) {
       multiplesOfPrimeFactors.add(candidate);
       return false;
     }
     return isNotMultipleOfAnyPreviousPrimeFactor(candidate);
   }
-  private static boolean
-  isLeastRelevantMultipleOfNextLargerPrimeFactor(int candidate) {
-    int nextLargerPrimeFactor = primes[multiplesOfPrimeFactors.size
-    ()];
-    int leastRelevantMultiple = nextLargerPrimeFactor * nextLargerPrimeFactor
-    ;
+  private static boolean isLeastRelevantMultipleOfNextLargerPrimeFactor(int candidate) {
+    int nextLargerPrimeFactor = primes[multiplesOfPrimeFactors.size()];
+    int leastRelevantMultiple = nextLargerPrimeFactor * nextLargerPrimeFactor;
     return candidate == leastRelevantMultiple;
   }
-  private static boolean
-  isNotMultipleOfAnyPreviousPrimeFactor(int candidate) {
+  private static boolean isNotMultipleOfAnyPreviousPrimeFactor(int candidate) {
     for (int n = 1; n &lt; multiplesOfPrimeFactors.size(); n++) {
       if (isMultipleOfNthPrimeFactor(candidate, n))
         return false;
     }
     return true;
   }
-  private static boolean
-  isMultipleOfNthPrimeFactor(int candidate, int n) {
-    return
-    candidate == smallestOddNthMultipleNotLessThanCandidate(candidate
-    , n);
+  private static boolean isMultipleOfNthPrimeFactor(int candidate, int n) {
+    return candidate == smallestOddNthMultipleNotLessThanCandidate(candidate, n);
   }
-  private static int
-  smallestOddNthMultipleNotLessThanCandidate(int candidate, int
-   n) {
+  private static int smallestOddNthMultipleNotLessThanCandidate(int candidate, int n) {
     int multiple = multiplesOfPrimeFactors.get(n);
     while (multiple &lt; candidate)
       multiple += 2 * primes[n];
@@ -4797,8 +4763,8 @@ public class PreparedInsertSql extends Sql {
 <p>我们设计TokyoStockExchange类来实现这个接口。</p>
 <p>我们还要确保Portfolio的构造器接受作为参数的StockExchange引用：</p>
 <pre class="code-block"><code class="language-java">publicPortfolio{
-  privateStockExchangeexchange;
-  publicPortfolio(StockExchangeexchange){
+  private StockExchange exchange;
+  public Portfolio(StockExchangeexchange){
     this.exchange=exchange;
   }
   //...
@@ -4848,8 +4814,7 @@ public class PreparedInsertSql extends Sql {
 <p>不幸的是，多数应用程序都没有做分离处理。启始过程代码很特殊，被混杂到运行时逻辑中。下例就是典型的情形：</p>
 <pre class="code-block"><code class="language-java">public Service getService() {
   if (service == null)
-    service = new MyServiceImpl(...);// Good enough default for
-   most cases?
+    service = new MyServiceImpl(...);// Good enough default for most cases?
   return service;
 }</code></pre>
 <p>这就是所谓 <strong>延迟初始化/赋值</strong> ，也有一些好处。在真正用到对象之前，无需操心这种架空构造，启始时间也会更短，而且还能保证永远不会返回null值。</p>
