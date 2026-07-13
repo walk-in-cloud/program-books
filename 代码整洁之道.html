@@ -3876,16 +3876,14 @@ try {
 <div class="page-anchor" id="page-293"></div><p><strong>7.6　定义常规流程</strong><br>如果你遵循前文提及的建议，在业务逻辑和错误处理代码之间就会有良好的区隔。大量代码会开始变得像是整洁而简朴的算法。然而，这样做却把错误检测推到了程序的边缘地带。你打包了外部API以抛出自己的异常，你在代码的顶端定义了一个处理器来应付任何失败了的运算。在大多数时候，这种手段很棒，不过有时你也许不愿这么做。</p>
 <div class="image-container"><img alt="图片" src="images/image_031.png"/></div><p>来看一个例子。下面的笨代码来自某个记账应用的开支总计模块：</p>
 <pre class="code-block"><code class="language-java">try {
-  MealExpenses expenses = expenseReportDAO.getMeals(employee.getID
-  ());
+  MealExpenses expenses = expenseReportDAO.getMeals(employee.getID());
   m_total += expenses.getTotal();
 } catch(MealExpensesNotFound e) {
   m_total += getMealPerDiem();
 }</code></pre>
 <p>业务逻辑是，如果消耗了餐食，则计入总额中。</p>
 <p>如果没有消耗，则员工得到当日餐食补贴。异常打断了业务逻辑。如果不去处理特殊情况会不会好一些？那样的话代码看起来会更简洁。就像这样：</p>
-<pre class="code-block"><code class="language-java">MealExpenses expenses = expenseReportDAO.getMeals(employee.getID
-());
+<pre class="code-block"><code class="language-java">MealExpenses expenses = expenseReportDAO.getMeals(employee.getID());
 m_total += expenses.getTotal();</code></pre>
 <p>能把代码写得那样简洁吗？能。可以修改ExpenseReportDAO，使其总是返回MealExpense对象。如果没有餐食消耗，就返回一个返回餐食补贴的MealExpense对象。</p>
 <div class="page-anchor" id="page-297"></div><pre class="code-block"><code class="language-java">public class PerDiemMealExpenses implements MealExpenses {
@@ -3972,7 +3970,7 @@ for (Employee e : employees) {
 <p><strong>8.1　使用第三方代码</strong><br>在接口提供者和使用者之间，存在与生俱来的张力。第三方程序包和框架提供者追求普适性，这样就能在多个环境中工作，吸引广泛的用户。而使用者则想要集中满足特定需求的接口。这种张力会导致系统边界上出现问题。</p>
 <p>以java.util.Map为例。如你在表8-1中所见，Map有着广阔的接口和丰富的功能。当然，这种力量和灵活性很有用，但也要付出代价。比如，应用程序可能构造一个Map对象并传递它。我们的初衷可能是Map对象的所有接收者都不要删除映射图中的任何东西。但表8-1的顶端却正好有一个clear()方法。Map的任何使用者都能清除映射图。或许设计惯例是Map中只能保存特定的类型，但Map并不会可靠地约束存于其中的对象的类型。使用者可随意往Map中塞入任何类型的条目。</p>
 <div class="image-container"><img alt="图片" src="images/image_033.png"/></div>
-<p>图8-1Mop类的方法如果你的应用程序需要一个包容Sensor类对象的Map映射图，大概会是这样：</p>
+<p>图8-1Map类的方法如果你的应用程序需要一个包容Sensor类对象的Map映射图，大概会是这样：</p>
 <pre class="code-block"><code class="language-java">Map sensors = new HashMap();</code></pre>
 <p>当代码的其他部分需要访问这些sensor，就会有这行代码：</p>
 <pre class="code-block"><code class="language-java">Sensor s = (Sensor)sensors.get(sensorId);</code></pre>
@@ -3987,9 +3985,8 @@ Sensor s = sensors.get(sensorId );</code></pre>
   private Map sensors = new HashMap();
   public Sensor getById(String id) {
     return (Sensor) sensors.get(id);
-  }</code></pre>
-<p>//片段</p>
-<pre class="code-block"><code class="language-java">}</code></pre>
+  }
+}</code></pre>
 <p>边界上的接口（Map）是隐藏的。它能随来自应用程序其他部分的极小的影响而变动。对泛型的使用不再是个大问题，因为转换和类型管理是在Sensors类内部处理的。</p>
 <p>该接口也经过仔细修整和归置以适应应用程序的需要。结果就是得到易于理解、难以被误用的代码。Sensors类推动了设计和业务的规则。</p>
 <p>我们并不建议总是以这种方式封装Map的使用。</p>
