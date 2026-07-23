@@ -5475,13 +5475,13 @@ public class EUVacationPolicy extends VacationPolicy {
 <p>代码清单14-1Args的简单用法</p>
 <pre class="code-block"><code class="language-java">public static void main(String[] args) {
   try {
-    Argsarg = new Args("l,p#,d*", args);
+    Args arg = new Args("l, p#, d * ", args);
     boolean logging = arg.getBoolean('l');
-    intport = arg.getInt('p');
-    Stringdirectory = arg.getString('d');
+    int port = arg.getInt('p');
+    String directory = arg.getString('d');
     executeApplication(logging, port, directory);
   } catch (ArgsException e) {
-    System.out.printf("Argumenterror:%s\n", e.errorMessage());
+    System.out.printf("Argument error: % s\n", e.errorMessage());
   }
 }</code></pre>
 <p>可以看到这有多简单。我们只是用两个参数创建了Args类的一个实体。第一个参数是格式字符串，或 <strong>范式</strong> 字符串：l,p#,d*。它定义了三个命令行参数。第一个，-l，是一个布尔值参数。第二个，-p，是一个整数参数。第三个，-d，是一个字符串参数。向Args构造器传入的第二个参数就是向main传入的命令行参数数组。</p>
@@ -5490,23 +5490,21 @@ public class EUVacationPolicy extends VacationPolicy {
 <p>不管是格式化字符串或命令行参数出现问题，就会抛出一个ArgsException异常。可以从该异常的errorMessage中获得关于错误的描述。</p>
 <div class="page-anchor" id="page-470"></div><p><strong>14.1Args的实现</strong><br>代码清单14-2是Args类的实现。请仔细阅读。我在代码风格和结构上花了大力气，使之值得仿效。</p>
 <p>代码清单14-2Args.java</p><pre class="code-block"><code class="language-java">package com.objectmentor.utilities.args;
-import static com.objectmentor.utilities.args.ArgsException.
-ErrorCode.*;
-import java.util.*;
+import static com.objectmentor.utilities.args.ArgsException.ErrorCode. * ;
+import java.util. * ;
 public class Args {
   private Map&lt;Character, ArgumentMarshaler&gt; marshalers;
   private Set&lt;Character&gt; argsFound;
   private ListIterator&lt;String&gt; currentArgument;
   public Args(String schema, String[] args) throws ArgsException {
-    marshalers = new HashMap&lt;Character, ArgumentMarshaler&gt;
-    ();
+    marshalers = new HashMap&lt;Character, ArgumentMarshaler&gt;();
     argsFound = new HashSet&lt;Character&gt;();
     parseSchema(schema);
     parseArgumentStrings(Arrays.asList(args));
   }
   private void parseSchema(String schema) throws ArgsException {
-    for (String element : schema.split(","))
-      if (element.length() &gt; 0)
+    for (String element : schema.split(", "))
+    if (element.length() &gt; 0)
         parseSchemaElement(element.trim());
   }
   private void parseSchemaElement(String element) throws ArgsException {
@@ -5525,22 +5523,18 @@ public class Args {
       marshalers.put(elementId, new StringArrayArgumentMarshaler()
       );
     else
-      throw new ArgsException(INVALID_ARGUMENT_FORMAT, elementId,
-      elementTail);
+        throw new ArgsException(INVALID_ARGUMENT_FORMAT, elementId, elementTail);
   }
-  private void validateSchemaElementId(char elementId) throws
-  ArgsException {
+  private void validateSchemaElementId(char elementId) throws ArgsException {
     if (!Character.isLetter(elementId))
-      throw new ArgsException(INVALID_ARGUMENT_NAME, elementId, null
-      );
+        throw new ArgsException(INVALID_ARGUMENT_NAME, elementId, null
+    );
   }
-  private void parseArgumentStrings(List&lt;String&gt; argsList) throws
-   ArgsException
+  private void parseArgumentStrings(List&lt;String&gt; argsList) throws ArgsException
   {
-    for (currentArgument = argsList.listIterator(); currentArgument
-      .hasNext();) {
+    for (currentArgument = argsList.listIterator(); currentArgument.hasNext();) {
       String argString = currentArgument.next();
-      if (argString.startsWith("-")) {
+      if (argString.startsWith(" - ")) {
         parseArgumentCharacters(argString.substring(1));
       } else {
         currentArgument.previous();
@@ -5548,10 +5542,9 @@ public class Args {
       }
     }
   }
-  private void parseArgumentCharacters(String argChars) throws
-  ArgsException {
-    for (int i = 0; i &lt; argChars.length(); i++)
-      parseArgumentCharacter(argChars.charAt(i));
+  private void parseArgumentCharacters(String argChars) throws ArgsException {
+    for (int i = 0; i &lt; argChars.length(); i + + )
+     parseArgumentCharacter(argChars.charAt(i));
   }
   private void parseArgumentCharacter(char argChar) throws ArgsException {
     ArgumentMarshaler m = marshalers.get(argChar);
@@ -5574,49 +5567,44 @@ public class Args {
     return currentArgument.nextIndex();
   }
   public boolean getBoolean(char arg) {
-    return BooleanArgumentMarshaler.getValue(marshalers.get(arg)
-    );
+    return BooleanArgumentMarshaler.getValue(marshalers.get(arg));
   }
   public String getString(char arg) {
     return StringArgumentMarshaler.getValue(marshalers.get(arg));
   }
   public int getInt(char arg) {
-    return IntegerArgumentMarshaler.getValue(marshalers.get(arg)
-    );
+    return IntegerArgumentMarshaler.getValue(marshalers.get(arg));
   }
   public double getDouble(char arg) {
     return DoubleArgumentMarshaler.getValue(marshalers.get(arg));
   }
   public String[] getStringArray(char arg) {
-    return StringArrayArgumentMarshaler.getValue(marshalers.get(
-    arg));
+    return StringArrayArgumentMarshaler.getValue(marshalers.get(arg));
   }
 }</code></pre>
 <p>注意，你可以从上到下阅读这些代码，不用跳来跳去，也不用先看后面的部分。唯一需要先看的是ArgumentMarshaler的定义，这部分我有意省略了。仔细看这段代码，你应该能理解ArgumentMarshaler接口是什么，其派生类做什么。下面我将向你展示一部分（如代码清单14-3～14-6所示）。</p>
 <p>代码清单14-3ArgumentMarshaler.java</p>
-<pre class="code-block"><code class="language-java">public interfaceArgumentMarshaler{
-  voidset(Iterator&lt;String&gt;currentArgument)throws
-  ArgsException;
+<pre class="code-block"><code class="language-java">public interface ArgumentMarshaler{
+  void set(Iterator&lt;String&gt;currentArgument) throws ArgsException;
 }</code></pre>
 <p>代码清单14-4BooleanArgumentMarshaler.java</p>
 <pre class="code-block"><code class="language-java">public class BooleanArgumentMarshaler implements ArgumentMarshaler
- {
+{
   private boolean booleanValue = false;
   public void set(Iterator&lt;String&gt; currentArgument) throws ArgsException {
     booleanValue = true;
   }
   public static boolean getValue(ArgumentMarshaler am) {
-    if (am != null &amp;&amp; am instanceof BooleanArgumentMarshaler)
-      return ((BooleanArgumentMarshaler) am).booleanValue;
+    if (am ! = null &amp; &amp; am instanceof BooleanArgumentMarshaler)
+        return ((BooleanArgumentMarshaler) am).booleanValue;
     else
-      return false;
+        return false;
   }
 }</code></pre>
 <p>代码清单14-5StringArgumentMarshaler.java</p>
-<pre class="code-block"><code class="language-java">import static com.objectmentor.utilities.args.ArgsException.
-ErrorCode.*;
+<pre class="code-block"><code class="language-java">import static com.objectmentor.utilities.args.ArgsException.ErrorCode. * ;
 public class StringArgumentMarshaler implements ArgumentMarshaler
- {
+{
   private String stringValue = "";
   public void set(Iterator&lt;String&gt; currentArgument) throws ArgsException {
     try {
@@ -5627,16 +5615,14 @@ public class StringArgumentMarshaler implements ArgumentMarshaler
   }
   public static String getValue(ArgumentMarshaler am) {
     if (am != null &amp;&amp; am instanceof StringArgumentMarshaler)
-      return ((StringArgumentMarshaler) am).stringValue;
+        return ((StringArgumentMarshaler) am).stringValue;
     else
-      return "";
+        return "";
   }
 }</code></pre>
 <p>代码清单14-6IntegerArgumentMarshaler.java</p>
-<pre class="code-block"><code class="language-java">import static com.objectmentor.utilities.args.ArgsException.
-ErrorCode.*;
-public class IntegerArgumentMarshaler implements ArgumentMarshaler
- {
+<pre class="code-block"><code class="language-java">import static com.objectmentor.utilities.args.ArgsException.ErrorCode. * ;
+public class IntegerArgumentMarshaler implements ArgumentMarshaler{
   private int intValue = 0;
   public void set(Iterator&lt;String&gt; currentArgument) throws ArgsException {
     String parameter = null;
@@ -5651,7 +5637,7 @@ public class IntegerArgumentMarshaler implements ArgumentMarshaler
   }
   public static int getValue(ArgumentMarshaler am) {
     if (am != null &amp;&amp; am instanceof IntegerArgumentMarshaler)
-      return ((IntegerArgumentMarshaler) am).intValue;
+        return ((IntegerArgumentMarshaler) am).intValue;
     else
       return 0;
   }
@@ -5661,89 +5647,71 @@ public class IntegerArgumentMarshaler implements ArgumentMarshaler
 <p>还有些信息可能会困扰你：错误码常量的定义。</p>
 <p>这些是在ArgsException类（代码清单14-7）中定义的。</p>
 <p>代码清单14-7ArgsException.java</p>
-<pre class="code-block"><code class="language-java">import static com.objectmentor.utilities.args.ArgsException.
-ErrorCode.*;
+<pre class="code-block"><code class="language-java">import static com.objectmentor.utilities.args.ArgsException.ErrorCode. * ;
 public class ArgsException extends Exception {
- private char errorArgumentId = '\0';
- private String errorParameter = null;
- private ErrorCode errorCode = OK;
- public ArgsException() {}
- public ArgsException(String message) {super(message);}
- public ArgsException(ErrorCode errorCode) {
-  this.errorCode = errorCode;
- }
- public ArgsException(ErrorCode errorCode, String errorParameter) {
-  this.errorCode = errorCode;
-  this.errorParameter = errorParameter;
- }
- public ArgsException(ErrorCode errorCode,
- char errorArgumentId,String errorParameter) {
-  this.errorCode = errorCode;
-  this.errorParameter = errorParameter;
-  this.errorArgumentId = errorArgumentId;
- }
- public char getErrorArgumentId() {
-  return errorArgumentId;
- }
- public void setErrorArgumentId(char errorArgumentId) {
-  this.errorArgumentId = errorArgumentId;
- }
- public String getErrorParameter() {
-  return errorParameter;
- }
- public void setErrorParameter(String errorParameter) {
-  this.errorParameter = errorParameter;
- }
- public ErrorCode getErrorCode() {
-  return errorCode;
- }
- public void setErrorCode(ErrorCode errorCode) {
-  this.errorCode = errorCode;
- }
- public String errorMessage() {
-  switch (errorCode) {
-   case OK:
-    return "TILT:Shouldnotgethere.";
-   case UNEXPECTED_ARGUMENT:
-    return String.format("Argument-%cunexpected
-    .", errorArgumentId);
-   case MISSING_STRING:
-    return String.format("Could not find string parameter for -
-    %c.",
-    errorArgumentId);
-   case INVALID_INTEGER:
-    return String.format("Argument-%cexpectsanintegerbutwas
-    '%s'.",
-    errorArgumentId, errorParameter);
-   case MISSING_INTEGER:
-    return String.format("Could not find integer parameter for -
-    %c.",
-    errorArgumentId);
-   case INVALID_DOUBLE:
-    return String.format("Argument -
-    %c expects a double but was '%s'.",
-    errorArgumentId, errorParameter);
-   case MISSING_DOUBLE:
-    return String.format("Could not find double parameter for -
-    %c.",
-    errorArgumentId);
-   case INVALID_ARGUMENT_NAME:
-    return String.format("'%c' is nota
-    valid argument name.",
-    errorArgumentId);
-   case INVALID_ARGUMENT_FORMAT:
-    return String.format("'%s' is not a valid argument format.",
-    errorParameter);
+  private char errorArgumentId = '\0';
+  private String errorParameter = null;
+  private ErrorCode errorCode = OK;
+  public ArgsException() {}
+  public ArgsException(String message) {super(message);}
+  public ArgsException(ErrorCode errorCode) {
+    this.errorCode = errorCode;
   }
-  return "";
- }
- public enum ErrorCode {
-  OK, INVALID_ARGUMENT_FORMAT, UNEXPECTED_ARGUMENT, INVALID_ARGUMENT_NAME
-  ,
-  MISSING_STRING,
-  MISSING_INTEGER, INVALID_INTEGER,
-  MISSING_DOUBLE, INVALID_DOUBLE
- }</code></pre>
+  public ArgsException(ErrorCode errorCode, String errorParameter) {
+    this.errorCode = errorCode;
+    this.errorParameter = errorParameter;
+  }
+  public ArgsException(ErrorCode errorCode, char errorArgumentId, String errorParameter) {
+    this.errorCode = errorCode;
+    this.errorParameter = errorParameter;
+    this.errorArgumentId = errorArgumentId;
+  }
+  public char getErrorArgumentId() {
+    return errorArgumentId;
+  }
+  public void setErrorArgumentId(char errorArgumentId) {
+    this.errorArgumentId = errorArgumentId;
+  }
+  public String getErrorParameter() {
+    return errorParameter;
+  }
+  public void setErrorParameter(String errorParameter) {
+    this.errorParameter = errorParameter;
+  }
+  public ErrorCode getErrorCode() {
+    return errorCode;
+  }
+  public void setErrorCode(ErrorCode errorCode) {
+    this.errorCode = errorCode;
+  }
+  public String errorMessage() {
+    switch (errorCode) {
+      case OK:
+        return "TILT: Should not get here.";
+      case UNEXPECTED_ARGUMENT:
+        return String.format("Argument - % c unexpected.", errorArgumentId);
+      case MISSING_STRING:
+        return String.format("Could not find string parameter for - % c.",errorArgumentId);
+      case INVALID_INTEGER:
+        return String.format("Argument - % c expects an integer but was' % s'.",errorArgumentId, errorParameter);
+      case MISSING_INTEGER:
+        return String.format("Could not find integer parameter for - % c.",errorArgumentId);
+      case INVALID_DOUBLE:
+        return String.format("Argument - % c expects a double but was ' % s'.",errorArgumentId, errorParameter);
+      case MISSING_DOUBLE:
+        return String.format("Could not find double parameter for - % c.",errorArgumentId);
+      case INVALID_ARGUMENT_NAME:
+        return String.format("' % c' is notavalid argument name.",errorArgumentId);
+      case INVALID_ARGUMENT_FORMAT:
+        return String.format("' % s' is not a valid argument format.", errorParameter);
+    }
+    return "";
+  }
+  public enum ErrorCode {
+    OK, INVALID_ARGUMENT_FORMAT, UNEXPECTED_ARGUMENT, INVALID_ARGUMENT_NAME
+    , MISSING_STRING,
+    MISSING_INTEGER, INVALID_INTEGER, MISSING_DOUBLE, INVALID_DOUBLE
+  }</code></pre>
 <p>为了充实这么一个简单概念的细节，需要如此多代码，这很值得注意。原因之一是我们使用了Java这种唠叨型语言。作为一种静态类型语言，需要大量语句才能满足类型系统的要求。在Ruby、Python或Smalltalk等语言中，程序会短很多 [1] 。</p>
 <p>请再次阅读这段代码。特别留意命名方式、函数大小和代码格式。如果你是经验丰富的程序员，可能会对风格或结构有着这样或那样的不同观点。不过，希望你认为这段程序总体上编写良好，有着整洁的结构。</p>
 <p>例如，如何增加新参数类型，如日期或复杂数字参数。其实现手段很清楚，而且只需要花一点点力气即可。简言之，只需要从ArgumentMarshaler派生一个新类，写一个新的getXXX函数，在parseSchemaElement函数中添加一个新的case语句。可能还需要添加新的ArgsException.Errorcode和新错误信息。</p>
@@ -5756,7 +5724,7 @@ public class ArgsException extends Exception {
 <p>它“能工作”，但却很烂。</p>
 <p>代码清单14-8Args.java（初稿）</p>
 <pre class="code-block"><code class="language-java">import java.text.ParseException;
-import java.util.*;
+import java.util. * ;
 public class Args {
   private String schema;
   private String[] args;
@@ -5783,8 +5751,8 @@ public class Args {
       valid = parse();
     }
     private boolean parse() throws ParseException {
-      if (schema.length() == 0 &amp;&amp; args.length == 0)
-        return true;
+      if (schema.length() = = 0 &amp; &amp; args.length = = 0)
+      return true;
       parseSchema();
       try {
         parseArguments();
@@ -5793,7 +5761,7 @@ public class Args {
       return valid;
     }
     private boolean parseSchema() throws ParseException {
-      for (String element : schema.split(",")) {
+      for (String element : schema.split(", ")) {
         if (element.length() &gt; 0) {
           String trimmedElement = element.trim();
           parseSchemaElement(trimmedElement);
@@ -5806,24 +5774,23 @@ public class Args {
       String elementTail = element.substring(1);
       validateSchemaElementId(elementId);
       if (isBooleanSchemaElement(elementTail))
-        parseBooleanSchemaElement(elementId);
+      parseBooleanSchemaElement(elementId);
       else if (isStringSchemaElement(elementTail))
-        parseStringSchemaElement(elementId);
+      parseStringSchemaElement(elementId);
       else if (isIntegerSchemaElement(elementTail)) {
         parseIntegerSchemaElement(elementId);
       } else {
         throw new ParseException
-        (String.format("Argument:%chasinvalidformat:
-        %s.",
-        elementId,elementTail),0);
+        (String.format("Argument: % chasinvalidformat: % s.",
+        elementId, elementTail), 0);
       }
     }
     private void validateSchemaElementId(char elementId) throws
     ParseException {
       if (!Character.isLetter(elementId)) {
         throw new ParseException(
-        "Bad character:"+elementId+"in Args format: "+schema
-        ,0);
+        "Bad character:" + elementId + "in Args format: " + schema
+        , 0);
       }
     }
     private void parseBooleanSchemaElement(char elementId) {
@@ -5836,25 +5803,25 @@ public class Args {
       stringArgs.put(elementId, "");
     }
     private boolean isStringSchemaElement(String elementTail) {
-      return elementTail.equals("*");
+      return elementTail.equals(" * ");
     }
     private boolean isBooleanSchemaElement(String elementTail) {
-      return elementTail.length() == 0;
+      return elementTail.length() = = 0;
     }
     private boolean isIntegerSchemaElement(String elementTail) {
       return elementTail.equals("#");
     }
     private boolean parseArguments() throws ArgsException {
       for (currentArgument = 0; currentArgument &lt; args.length; currentArgument
-        ++) {
+      + + ) {
         String arg = args[currentArgument];
         parseArgument(arg);
       }
       return true;
     }
     private void parseArgument(String arg) throws ArgsException {
-      if (arg.startsWith("-"))
-        parseElements(arg);
+      if (arg.startsWith(" - "))
+      parseElements(arg);
     }
     private void parseElements(String arg) throws ArgsException {
       for (int i = 1; i &lt; arg.length(); i++)
@@ -5926,34 +5893,30 @@ public class Args {
     }
     public String usage() {
       if (schema.length() &gt; 0)
-        return "-[" + schema + "]";
+      return " - [" + schema + "]";
       else
-        return "";
+      return "";
     }
     public String errorMessage() throws Exception {
       switch (errorCode) {
         case OK:
-          throw new Exception("TILT:Shouldnotgethere.");
+        throw new Exception("TILT: Should not get here.");
         case UNEXPECTED_ARGUMENT:
-          return unexpectedArgumentMessage();
+        return unexpectedArgumentMessage();
         case MISSING_STRING:
-          return String.format("Couldnotfindstringparameterfor
-          -%c.",
-          errorArgumentId);
+        return String.format("Could not find string parameter for - % c.",
+        errorArgumentId);
         case INVALID_INTEGER:
-          return String.format("Argument-%cexpectsanintegerbutwas
-          '%s'.",
-          errorArgumentId, errorParameter);
+        return String.format("Argument - % c expects an integer but was' % s'.",
+        errorArgumentId, errorParameter);
         case MISSING_INTEGER:
-          return String.format("Couldnotfindintegerparameterfor
-          -%c.",
-          errorArgumentId);
+        return String.format("Could not find integer parameter for - % c.",
+        errorArgumentId);
       }
       return "";
     }
     private String unexpectedArgumentMessage() {
-      StringBuffer message = new StringBuffer("Argument(s)-
-      ");
+      StringBuffer message = new StringBuffer("Argument(s) - ");
       for (char c : unexpectedArguments) {
         message.append(c);
       }
@@ -5961,13 +5924,13 @@ public class Args {
       return message.toString();
     }
     private boolean falseIfNull(Boolean b) {
-      return b != null &amp;&amp; b;
+      return b ! = null &amp; &amp; b;
     }
     private int zeroIfNull(Integer i) {
-      return i == null ? 0 : i;
+      return i = = null ? 0 : i;
     }
     private String blankIfNull(String s) {
-      return s == null ? "" : s;
+      return s = = null ? "" : s;
     }
     public String getString(char arg) {
       return blankIfNull(stringArgs.get(arg));
@@ -5995,7 +5958,7 @@ public class Args {
 <p>代码清单14-9Args.java（只支持Boolean）</p>
 <pre class="code-block"><code class="language-java">package com.objectmentor.utilities.getopts;
 
-import java.util.*;
+import java.util. * ;
 public class Args {
   private String schema;
   private String[] args;
@@ -6013,20 +5976,20 @@ public class Args {
     return valid;
   }
   private boolean parse() {
-    if (schema.length() == 0 &amp;&amp; args.length == 0)
-      return true;
+    if (schema.length() = = 0 &amp; &amp; args.length = = 0)
+    return true;
     parseSchema();
     parseArguments();
-    return unexpectedArguments.size() == 0;
+    return unexpectedArguments.size() = = 0;
   }
   private boolean parseSchema() {
-    for (String element : schema.split(",")) {
+    for (String element : schema.split(", ")) {
       parseSchemaElement(element);
     }
     return true;
   }
   private void parseSchemaElement(String element) {
-    if (element.length() == 1) {
+    if (element.length() = = 1) {
       parseBooleanSchemaElement(element);
     }
   }
@@ -6038,12 +6001,12 @@ public class Args {
   }
   private boolean parseArguments() {
     for (String arg : args)
-      parseArgument(arg);
+    parseArgument(arg);
     return true;
   }
   private void parseArgument(String arg) {
-    if (arg.startsWith("-"))
-      parseElements(arg);
+    if (arg.startsWith(" - "))
+    parseElements(arg);
   }
   private void parseElements(String arg) {
     for (int i = 1; i &lt; arg.length(); i++)
@@ -6067,9 +6030,9 @@ public class Args {
   }
   public String usage() {
     if (schema.length() &gt; 0)
-      return "-[" + schema + "]";
+    return " - [" + schema + "]";
     else
-      return "";
+    return "";
   }
   public String errorMessage() {
     if (unexpectedArguments.size() &gt; 0) {
@@ -6078,8 +6041,7 @@ public class Args {
     return "";
   }
   private String unexpectedArgumentMessage() {
-    StringBuffer message = new StringBuffer("Argument(s)-
-    ");
+    StringBuffer message = new StringBuffer("Argument(s) - ");
     for (char c : unexpectedArguments) {
       message.append(c);
     }
@@ -6096,7 +6058,7 @@ public class Args {
 <p>代码清单14-10Args.java（Boolean和String）</p>
 <pre class="code-block"><code class="language-java">package com.objectmentor.utilities.getopts;
 import java.text.ParseException;
-import java.util.*;
+import java.util. * ;
 public class Args {
   private String schema;
   private String[] args;
@@ -6118,14 +6080,14 @@ public class Args {
       valid = parse();
     }
     private boolean parse() throws ParseException {
-      if (schema.length() == 0 &amp;&amp; args.length == 0)
-        return true;
+      if (schema.length() = = 0 &amp; &amp; args.length = = 0)
+      return true;
       parseSchema();
       parseArguments();
       return valid;
     }
     private boolean parseSchema() throws ParseException {
-      for (String element : schema.split(",")) {
+      for (String element : schema.split(", ")) {
         if (element.length() &gt; 0) {
           String trimmedElement = element.trim();
           parseSchemaElement(trimmedElement);
@@ -6138,41 +6100,40 @@ public class Args {
       String elementTail = element.substring(1);
       validateSchemaElementId(elementId);
       if (isBooleanSchemaElement(elementTail))
-        parseBooleanSchemaElement(elementId);
+      parseBooleanSchemaElement(elementId);
       else if (isStringSchemaElement(elementTail))
-        parseStringSchemaElement(elementId);
+      parseStringSchemaElement(elementId);
     }
     private void validateSchemaElementId(char elementId) throws
     ParseException {
       if (!Character.isLetter(elementId)) {
         throw new ParseException(
-        "Badcharacter:" + elementId + "inArgsformat
-        :" + schema, 0);
+        "Bad character:" + elementId + "in Args format:" + schema, 0);
       }
     }
     private void parseStringSchemaElement(char elementId) {
       stringArgs.put(elementId, "");
     }
     private boolean isStringSchemaElement(String elementTail) {
-      return elementTail.equals("*");
+      return elementTail.equals(" * ");
     }
     private boolean isBooleanSchemaElement(String elementTail) {
-      return elementTail.length() == 0;
+      return elementTail.length() = = 0;
     }
     private void parseBooleanSchemaElement(char elementId) {
       booleanArgs.put(elementId, false);
     }
     private boolean parseArguments() {
       for (currentArgument = 0; currentArgument &lt; args.length; currentArgument
-        ++) {
+      + + ) {
         String arg = args[currentArgument];
         parseArgument(arg);
       }
       return true;
     }
     private void parseArgument(String arg) {
-      if (arg.startsWith("-"))
-        parseElements(arg);
+      if (arg.startsWith(" - "))
+      parseElements(arg);
     }
     private void parseElements(String arg) {
       for (int i = 1; i &lt; arg.length(); i++)
@@ -6220,9 +6181,9 @@ public class Args {
     }
     public String usage() {
       if (schema.length() &gt; 0)
-        return "-[" + schema + "]";
+      return " - [" + schema + "]";
       else
-        return "";
+      return "";
     }
     public String errorMessage() throws Exception {
       if (unexpectedArguments.size() &gt; 0) {
@@ -6230,18 +6191,15 @@ public class Args {
       } else
       switch (errorCode) {
         case MISSING_STRING:
-          return String.format("Couldnotfindstringparameterfor
-          -%c.",
-          errorArgument);
+        return String.format("Could not find string parameter for - % c.",
+        errorArgument);
         case OK:
-          throw new Exception("TILT:Shouldnotgethere
-          .");
+        throw new Exception("TILT: Should not get here.");
       }
       return "";
     }
     private String unexpectedArgumentMessage() {
-      StringBuffer message = new StringBuffer("Argument(s)-
-      ");
+      StringBuffer message = new StringBuffer("Argument(s) - ");
       for (char c : unexpectedArguments) {
         message.append(c);
       }
@@ -6252,13 +6210,13 @@ public class Args {
       return falseIfNull(booleanArgs.get(arg));
     }
     private boolean falseIfNull(Boolean b) {
-      return b == null ? false : b;
+      return b = = null ? false : b;
     }
     public String getString(char arg) {
       return blankIfNull(stringArgs.get(arg));
     }
     private String blankIfNull(String s) {
-      return s == null ? "" : s;
+      return s = = null ? "" : s;
     }
     public boolean has(char arg) {
       return argsFound.contains(arg);
@@ -6280,11 +6238,11 @@ public class Args {
 <p>而且每次修改后，系统都要能工作。第一个修改是在烂摊子末尾添加ArgumentMarshaler的轮廓。</p>
 <p>代码清单14-11　向Args.java添加ArgumentMarshaler</p>
 <pre class="code-block"><code class="language-java">private classArgumentMarshaler{
-  private booleanbooleanValue=false;
-  public voidsetBoolean(booleanvalue){
-    booleanValue=value;
+  private booleanbooleanValue = false;
+  public void setBoolean(boolean value){
+    booleanValue = value;
   }
-  public booleangetBoolean(){returnbooleanValue;}
+  public boolean getBoolean(){returnbooleanValue;}
 }
 private classBooleanArgumentMarshalerextendsArgumentMarshaler
 {
@@ -6297,183 +6255,183 @@ private classIntegerArgumentMarshalerextendsArgumentMarshaler
 }
 }</code></pre>
 <p>显然，这什么也不会破坏。于是我做了一点最简单的、破坏性尽可能小的修改。我修改了HashMap，采用ArgumentMarshaler，使之支持Boolean参数。</p>
-<pre class="code-block"><code class="language-java">privateMap&lt;Character, ArgumentMarshaler &gt;booleanArgs= new HashMap&lt;Character, ArgumentMarshaler &gt;();</code></pre>
+<pre class="code-block"><code class="language-java">privateMap&lt;Character, ArgumentMarshaler &gt;booleanArgs = new HashMap&lt;Character, ArgumentMarshaler &gt;();</code></pre>
 <p>这个修改影响到少数语句，我很快就修正了。</p>
 <pre class="code-block"><code class="language-java">...
-private voidparseBooleanSchemaElement(charelementId){
+private voidparseBooleanSchemaElement(char elementId){
   booleanArgs.put(elementId, new BooleanArgumentMarshaler()
   );
 }
 ...
-private voidsetBooleanArg(charargChar,booleanvalue) {
+private voidsetBooleanArg(char argChar, boolean value) {
   booleanArgs. get (argChar). setBoolean (value);
 }
 ...
-public booleangetBoolean(chararg){
+public boolean getBoolean(chararg){
   returnfalseIfNull(booleanArgs.get(arg). getBoolean() );
 }</code></pre>
 <p>注意，这些修改正是在我之前提到的那些区域之内所做的：参数类型的parse、set和get操作。不幸的是，即便修改如此细微，有些测试还是会失败。仔细看getBoolean，可以看到如果用y去调用、而并没有y这个参数，则booleanArgs.get('y')就会返回null值，函数将抛出一个NullPointerException异常。函数falseIfNull用以防止这种状况发生，但我做出的修改却导致该函数无所作为。</p>
 <p>渐进主义要求我在做其他修改之前迅速修正这个问题。修正并不费劲。我只是把对null值的检查移了个位置。再也不用检测bollean是否为null，而是检查ArgumentMarshaler是否为null。</p>
 <p>首先，我移除了getBoolean函数中的falseIfNull调用。现在它没什么用了，所以我也删去了这个函数。测试还是以同样的方式失败，所以我确定没有引入新的错误。</p>
-<pre class="code-block"><code class="language-java">public booleangetBoolean(chararg){
+<pre class="code-block"><code class="language-java">public boolean getBoolean(chararg){
   returnbooleanArgs.get(arg).getBoolean();
 }</code></pre>
 <div class="page-anchor" id="page-528"></div><p>下一步，我把函数拆解为两行，并把ArgumentMarshaler放到它自己的名为argumentMarshaler的变量中 [2] 。我不在意变量名太长，但它却有点啰嗦，把函数搞得支离破碎。</p>
 <p>所以我把变量名缩短为am[N5]。</p>
-<pre class="code-block"><code class="language-java">public booleangetBoolean(chararg){
-  Args.ArgumentMarshaler am =booleanArgs.get(arg);
+<pre class="code-block"><code class="language-java">public boolean getBoolean(chararg){
+  Args.ArgumentMarshaler am = booleanArgs.get(arg);
   return am .getBoolean();
 }</code></pre>
 <p>然后再放入检测null值的逻辑。</p>
-<pre class="code-block"><code class="language-java">public booleangetBoolean(chararg){
-  Args.ArgumentMarshaleram=booleanArgs.get(arg);
-  return am!=null&amp;&amp; am.getBoolean();
+<pre class="code-block"><code class="language-java">public boolean getBoolean(chararg){
+  Args.ArgumentMarshaler am = booleanArgs.get(arg);
+  return am ! = null &amp; &amp; am.getBoolean();
 }</code></pre>
 <p><strong>14.3　字符串参数</strong><br>添加String参数和添加boolean参数非常像。我要修改HashMap，让parse、set和get函数能工作。跟着就是按部就班，但我似乎该把所有的marshalling（编组）实现放到ArgumentMarshaler基类而不是派生类中。</p>
-<pre class="code-block"><code class="language-java">privateMap&lt;Character, ArgumentMarshaler &gt;stringArgs= new HashMap&lt;Character, ArgumentMarshaler &gt;();
+<pre class="code-block"><code class="language-java">privateMap&lt;Character, ArgumentMarshaler &gt;stringArgs = new HashMap&lt;Character, ArgumentMarshaler &gt;();
 ...
-private voidparseStringSchemaElement(charelementId){
+private voidparseStringSchemaElement(char elementId){
   stringArgs.put(elementId, new
   StringArgumentMarshaler() );
 }
 ...
-private voidsetStringArg(charargChar)throws
+private voidsetStringArg(char argChar)throws
 ArgsException{
-  currentArgument++;
+  currentArgument + + ;
   try {
     stringArgs. get (argChar). setString
     (args[currentArgument]);
   }catch (ArrayIndexOutOfBoundsExceptione){
-    valid=false;
-    errorArgumentId=argChar;
-    errorCode=ErrorCode.MISSING_STRING;
+    valid = false;
+    errorArgumentId = argChar;
+    errorCode = ErrorCode.MISSING_STRING;
     thrownewArgsException();
   }
 }
 ...
 publicStringgetString(chararg){
-  Args.ArgumentMarshaleram =stringArgs.get(arg);
-  return am==null? "":am.getString();
+  Args.ArgumentMarshaler am = stringArgs.get(arg);
+  return am = = null? "":am.getString();
 }
 ...
 private classArgumentMarshaler{
-  private booleanbooleanValue=false;
+  private booleanbooleanValue = false;
   privateStringstringValue;
-  public voidsetBoolean(booleanvalue){
-    booleanValue=value;
+  public void setBoolean(boolean value){
+    booleanValue = value;
   }
-  public booleangetBoolean(){
+  public boolean getBoolean(){
     returnbooleanValue;
   }
-  public voidsetString(Strings){
-    stringValue=s;
+  public void setString(String s){
+    stringValue = s;
   }
   publicStringgetString(){
-    returnstringValue==null?"":stringValue;
+    returnstringValue = = null?"":stringValue;
   }
 }</code></pre>
 <p>同样，也是每次修改一个地方，持续运行测试。</p>
 <p>如果测试出错，在做下一个修改前确保通过。</p>
 <p>现在你应该明白我的意图了。一旦我将当前的编组行为放到ArgumentMarshaler基类中，就会开始往派生类推入该行为。这样，在我逐渐修改程序的形状时，还能保持一切正常。</p>
 <p>下一步显而易见，把int参数的相关功能放到ArgumentMarshaler里面。同样，也是照方抓药。</p>
-<pre class="code-block"><code class="language-java">privateMap&lt;Character, ArgumentMarshaler&gt; intArgs= new HashMap&lt;Character, ArgumentMarshaler&gt; ();
+<pre class="code-block"><code class="language-java">privateMap&lt;Character, ArgumentMarshaler&gt; intArgs = new HashMap&lt;Character, ArgumentMarshaler&gt; ();
 ...
-private voidparseIntegerSchemaElement(charelementId){
+private voidparseIntegerSchemaElement(char elementId){
   intArgs.put(elementId, new IntegerArgumentMarshaler() );
 }
 ...
-private voidsetIntArg(charargChar)throws
+private voidsetIntArg(char argChar)throws
 ArgsException{
-  currentArgument++;
-  String parameter=null;
+  currentArgument + + ;
+  String parameter = null;
   try {
-    parameter=args[currentArgument];
+    parameter = args[currentArgument];
     intArgs. get (argChar). setInteger
     (Integer.parseInt(parameter));
   }catch (ArrayIndexOutOfBoundsExceptione){
-    valid=false;
-    errorArgumentId=argChar;
-    errorCode=ErrorCode.MISSING_INTEGER;
+    valid = false;
+    errorArgumentId = argChar;
+    errorCode = ErrorCode.MISSING_INTEGER;
     thrownewArgsException();
-  }catch (NumberFormatExceptione){
-    valid=false;
-    errorArgumentId=argChar;
-    errorParameter=parameter;
-    errorCode=ErrorCode.INVALID_INTEGER;
+  }catch (NumberFormatException e){
+    valid = false;
+    errorArgumentId = argChar;
+    errorParameter = parameter;
+    errorCode = ErrorCode.INVALID_INTEGER;
     thrownewArgsException();
   }
 }
 ...
-public intgetInt(chararg){
-  Args.ArgumentMarshaleram= intArgs.get(arg);
-  return am==null?0 :am.getInteger();
+public int getInt(chararg){
+  Args.ArgumentMarshaler am = intArgs.get(arg);
+  return am = = null?0 :am.getInteger();
 }
 ...
 private classArgumentMarshaler{
-  private booleanbooleanValue=false;
+  private booleanbooleanValue = false;
   privateStringstringValue;
   private intintegerValue;
-  public voidsetBoolean(booleanvalue){
-    booleanValue=value;
+  public void setBoolean(boolean value){
+    booleanValue = value;
   }
-  public booleangetBoolean(){
+  public boolean getBoolean(){
     returnbooleanValue;
   }
-  public voidsetString(Strings){
-    stringValue=s;
+  public void setString(String s){
+    stringValue = s;
   }
   publicStringgetString(){
-    returnstringValue==null?"":stringValue;
+    returnstringValue = = null?"":stringValue;
   }
-  public voidsetInteger(inti){
-    integerValue=i;
+  public void setInteger(int i){
+    integerValue = i;
   }
-  public intgetInteger(){
+  public int getInteger(){
     returnintegerValue;
   }
 }</code></pre>
 <p>当所有的编组操作都放到了ArgumentMarshaler中，我开始向派生类移植功能。第一步是把setBoolean函数放到BooleanArgumentMarshaler中，确保它能正确调用。所以我创建了一个抽象的set方法。</p>
 <pre class="code-block"><code class="language-java">private abstract classArgumentMarshaler{
-  protected booleanbooleanValue=false;
+  protected booleanbooleanValue = false;
   privateStringstringValue;
   private intintegerValue;
-  public voidsetBoolean(booleanvalue){
-    booleanValue=value;
+  public void setBoolean(boolean value){
+    booleanValue = value;
   }
-  public booleangetBoolean(){
+  public boolean getBoolean(){
     returnbooleanValue;
   }
-  public voidsetString(Strings){
-    stringValue=s;
+  public void setString(String s){
+    stringValue = s;
   }
   publicStringgetString(){
-    returnstringValue==null?"":stringValue;
+    returnstringValue = = null?"":stringValue;
   }
-  public voidsetInteger(inti){
-    integerValue=i;
+  public void setInteger(int i){
+    integerValue = i;
   }
-  public intgetInteger(){
+  public int getInteger(){
     returnintegerValue;
   }
-  public abstractvoidset(Strings);
+  public abstractvoidset(String s);
 }</code></pre>
 <p>然后在BooleanArgumentMarshaler中实现set方法。</p>
 <pre class="code-block"><code class="language-java">private classBooleanArgumentMarshalerextendsArgumentMarshaler
 {
-  public voidset(Strings){
-    booleanValue=true;
+  public void set(String s){
+    booleanValue = true;
   }
 }</code></pre>
 <p>最后，通过调用set，替换对setBoolean的调用。</p>
-<pre class="code-block"><code class="language-java">private voidsetBooleanArg(charargChar,booleanvalue) {
+<pre class="code-block"><code class="language-java">private voidsetBooleanArg(char argChar, boolean value) {
   booleanArgs.get(argChar). set("true");
 }</code></pre>
 <p>测试仍然全部通过。因为这次修改导致set函数放到了BooleanArgumentMarshaler里面，我就从ArgumentMarshaler基类删除了setBoolean方法。</p>
 <p>注意，抽象函数set有一个String参数，但其在BooleanArgumentMarshaler中的实现却没有使用这个参数。之所以在这里放个参数，是因为我知道StringArgumentMarshaler和IntegerArgumentMarshaler可能会使用它。</p>
 <p>跟着，我打算把get方法放到BooleanArgumentMarshaler中。这有点难看，因为返回类型必须是Object，且在这里需要转换为Boolean值。</p>
-<pre class="code-block"><code class="language-java">public booleangetBoolean(chararg){
-  Args.ArgumentMarshaleram=booleanArgs.get(arg);
-  returnam!=null&amp;&amp; (Boolean) am. get ();
+<pre class="code-block"><code class="language-java">public boolean getBoolean(chararg){
+  Args.ArgumentMarshaler am = booleanArgs.get(arg);
+  returnam ! = null &amp; &amp; (Boolean) am. get ();
 }</code></pre>
 <p>为了编译通过，我把get函数加到ArgumentMarshaler中。</p>
 <pre class="code-block"><code class="language-java">private abstractclassArgumentMarshaler{
@@ -6485,14 +6443,14 @@ private classArgumentMarshaler{
 <p>这样一来，虽然可以编译，但却无法通过测试。</p>
 <p>只要将get修改为抽象方法，并在BooleanArgumentMarshaler中实现，就能重新通过测试。</p>
 <pre class="code-block"><code class="language-java">private abstractclassArgumentMarshaler{
-  protected booleanbooleanValue=false;
+  protected booleanbooleanValue = false;
   ...
   public abstract Objectget();
 }
 PrivateclassBooleanArgumentMarshalerextendsArgumentMarshaler
 {
-  public voidset(Strings){
-    booleanValue=true;
+  public void set(String s){
+    booleanValue = true;
   }
   publicObjectget(){
     returnbooleanValue;
@@ -6500,40 +6458,40 @@ PrivateclassBooleanArgumentMarshalerextendsArgumentMarshaler
 }</code></pre>
 <p>测试又通过了。get和set方法都已部署到BooleanArgumentMarshaler中！这样我就可以从ArgumentMarshaler里面移除旧的getBoolean函数，把受保护的booleanValue变量向下移动到BooleanArgumentMarshaler，并将其设置为private。</p>
 <p>对于String也照此办理。我修改了set和get的部署方式，删除无用的函数，并移动了变量。</p>
-<pre class="code-block"><code class="language-java">private voidsetStringArg(charargChar)throws
+<pre class="code-block"><code class="language-java">private voidsetStringArg(char argChar)throws
 ArgsException{
-  currentArgument++;
+  currentArgument + + ;
   try {
     stringArgs.get(argChar). set (args[currentArgument]);
   }catch (ArrayIndexOutOfBoundsExceptione){
-    valid=false;
-    errorArgumentId=argChar;
-    errorCode=ErrorCode.MISSING_STRING;
+    valid = false;
+    errorArgumentId = argChar;
+    errorCode = ErrorCode.MISSING_STRING;
     thrownewArgsException();
   }
 }
 …
 publicStringgetString(chararg){
-  Args.ArgumentMarshaleram=stringArgs.get(arg);
-  returnam==null?"": (String) am. get ();
+  Args.ArgumentMarshaler am = stringArgs.get(arg);
+  returnam = = null?"": (String) am. get ();
 }
 ...
 private abstractclassArgumentMarshaler{
   private intintegerValue;
-  public voidsetInteger(inti){
-    integerValue=i;
+  public void setInteger(int i){
+    integerValue = i;
   }
-  public intgetInteger(){
+  public int getInteger(){
     returnintegerValue;
   }
-  public abstractvoidset(Strings);
+  public abstractvoidset(String s);
   public abstractObjectget();
 }
 private classBooleanArgumentMarshalerextendsArgumentMarshaler
 {
-  private booleanbooleanValue=false;
-  public voidset(Strings){
-    booleanValue=true;
+  private booleanbooleanValue = false;
+  public void set(String s){
+    booleanValue = true;
   }
   publicObjectget(){
     returnbooleanValue;
@@ -6541,9 +6499,9 @@ private classBooleanArgumentMarshalerextendsArgumentMarshaler
 }
 private classStringArgumentMarshalerextendsArgumentMarshaler
 {
-  privateStringstringValue="";
-  public voidset(Strings){
-    stringValue=s;
+  privateStringstringValue = "";
+  public void set(String s){
+    stringValue = s;
   }
   publicObjectget(){
     returnstringValue;
@@ -6551,7 +6509,7 @@ private classStringArgumentMarshalerextendsArgumentMarshaler
 }
 private classIntegerArgumentMarshalerextendsArgumentMarshaler
 {
-  public voidset(Strings){
+  public void set(String s){
   }
   publicObjectget(){
     return null;
@@ -6559,54 +6517,54 @@ private classIntegerArgumentMarshalerextendsArgumentMarshaler
 }
 }</code></pre>
 <p>最后，我为integer类型参数重复这个过程。这稍稍复杂一点，因为integer需要解析，而parse操作会抛出异常。不过结果会更好，因为NumberFormatException的概念在IntegerArgumentMarshaler中隐藏了。</p>
-<pre class="code-block"><code class="language-java">private booleanisIntArg(charargChar){return
-  intArgs.containsKey(argChar);}
-private voidsetIntArg(charargChar)throws
+<pre class="code-block"><code class="language-java">private booleanisIntArg(char argChar){return
+intArgs.containsKey(argChar);}
+private voidsetIntArg(char argChar)throws
 ArgsException{
-  currentArgument++;
-  String parameter=null;
+  currentArgument + + ;
+  String parameter = null;
   try {
-    parameter=args[currentArgument];
+    parameter = args[currentArgument];
     intArgs.get(argChar). set (parameter);
   }catch (ArrayIndexOutOfBoundsExceptione){
-    valid=false;
-    errorArgumentId=argChar;
-    errorCode=ErrorCode.MISSING_INTEGER;
+    valid = false;
+    errorArgumentId = argChar;
+    errorCode = ErrorCode.MISSING_INTEGER;
     thrownewArgsException();
   }catch ( ArgsException e){
-    valid=false;
-    errorArgumentId=argChar;
-    errorParameter=parameter;
-    errorCode=ErrorCode.INVALID_INTEGER;
+    valid = false;
+    errorArgumentId = argChar;
+    errorParameter = parameter;
+    errorCode = ErrorCode.INVALID_INTEGER;
     throw e ;
   }
 }
 ...
-private voidsetBooleanArg(charargChar){
+private voidsetBooleanArg(char argChar){
   try {
     booleanArgs.get(argChar).set("true");
-  }catch (ArgsExceptione){
+  }catch (ArgsException e){
   }
 }
 ...
-public intgetInt(chararg){
-  Args.ArgumentMarshaleram=intArgs.get(arg);
-  returnam==null?0: (Integer) am. get ();
+public int getInt(chararg){
+  Args.ArgumentMarshaler am = intArgs.get(arg);
+  returnam = = null?0: (Integer) am. get ();
 }
 ...
 private abstractclassArgumentMarshaler{
-  public abstractvoidset(Strings)throws
+  public abstractvoidset(String s)throws
   ArgsException;
   public abstractObjectget();
 }
 ...
 private classIntegerArgumentMarshalerextendsArgumentMarshaler
 {
-  private intintValue=0;
-  public voidset(Strings) throws ArgsException{
+  private intintValue = 0;
+  public void set(String s) throws ArgsException{
     try {
-      intValue=Integer.parseInt(s);
-    }catch (NumberFormatExceptione){
+      intValue = Integer.parseInt(s);
+    }catch (NumberFormatException e){
       thrownewArgsException();
     }
   }
@@ -6615,58 +6573,58 @@ private classIntegerArgumentMarshalerextendsArgumentMarshaler
   }
 }</code></pre>
 <p>测试当然继续通过。下一步，我要删掉算法顶端的三种不同Map。这样，整个系统就变得更通用了。不过，只是删除它们却无法达到目的，因为那样会破坏系统。反之，我为ArgumentMarshaler添加一个新的Map，然后再逐个修改那些方法，让方法调用这个新Map。</p>
-<pre class="code-block"><code class="language-java">public classArgs{
+<pre class="code-block"><code class="language-java">public class Args{
   ...
-  privateMap&lt;Character,ArgumentMarshaler&gt;booleanArgs= new HashMap&lt;Character,ArgumentMarshaler&gt;();
-  privateMap&lt;Character,ArgumentMarshaler&gt;stringArgs= new HashMap&lt;Character,ArgumentMarshaler&gt;();
-  privateMap&lt;Character,ArgumentMarshaler&gt;intArgs= new HashMap&lt;Character,ArgumentMarshaler&gt;();
-  privateMap&lt;Character,ArgumentMarshaler&gt;marshalers= new HashMap&lt;Character,ArgumentMarshaler&gt;() ;
+  privateMap&lt;Character,ArgumentMarshaler&gt;booleanArgs = new HashMap&lt;Character,ArgumentMarshaler&gt;();
+  privateMap&lt;Character,ArgumentMarshaler&gt;stringArgs = new HashMap&lt;Character,ArgumentMarshaler&gt;();
+  privateMap&lt;Character,ArgumentMarshaler&gt;intArgs = new HashMap&lt;Character,ArgumentMarshaler&gt;();
+  privateMap&lt;Character,ArgumentMarshaler&gt;marshalers = new HashMap&lt;Character,ArgumentMarshaler&gt;() ;
   ...
-  private voidparseBooleanSchemaElement(charelementId) {
-    ArgumentMarshalerm =new BooleanArgumentMarshaler();
-    booleanArgs.put(elementId,m);
-    marshalers.put(elementId,m);
+  private voidparseBooleanSchemaElement(char elementId) {
+    ArgumentMarshalerm = new BooleanArgumentMarshaler();
+    booleanArgs.put(elementId, m);
+    marshalers.put(elementId, m);
   }
-  private voidparseIntegerSchemaElement(charelementId) {
-    ArgumentMarshalerm=new IntegerArgumentMarshaler();
-    intArgs.put(elementId,m);
-    marshalers.put(elementId,m);
+  private voidparseIntegerSchemaElement(char elementId) {
+    ArgumentMarshalerm = new IntegerArgumentMarshaler();
+    intArgs.put(elementId, m);
+    marshalers.put(elementId, m);
   }
-  private voidparseStringSchemaElement(charelementId) {
-    ArgumentMarshalerm=new StringArgumentMarshaler() ;
-    stringArgs.put(elementId,m);
-    marshalers.put(elementId,m);
+  private voidparseStringSchemaElement(char elementId) {
+    ArgumentMarshalerm = new StringArgumentMarshaler() ;
+    stringArgs.put(elementId, m);
+    marshalers.put(elementId, m);
   }</code></pre>
 <p>当然，测试还是通过了。接着，我把isBooleanArg：</p>
-<pre class="code-block"><code class="language-java">private booleanisBooleanArg(charargChar){
+<pre class="code-block"><code class="language-java">private booleanisBooleanArg(char argChar){
   returnbooleanArgs.containsKey(argChar);
 }</code></pre>
 <p>修改成这样：</p>
-<pre class="code-block"><code class="language-java">private booleanisBooleanArg(charargChar){
-  ArgumentMarshalerm=marshalers.get(argChar);
+<pre class="code-block"><code class="language-java">private booleanisBooleanArg(char argChar){
+  ArgumentMarshalerm = marshalers.get(argChar);
   returnminstanceofBooleanArgumentMarshaler;
 }</code></pre>
 <p>测试仍然通过。于是我修改了一下isIntArg和isStringArg。</p>
-<pre class="code-block"><code class="language-java">private booleanisIntArg(charargChar){
-  ArgumentMarshalerm=marshalers.get(argChar);
+<pre class="code-block"><code class="language-java">private booleanisIntArg(char argChar){
+  ArgumentMarshalerm = marshalers.get(argChar);
   returnminstanceofIntegerArgumentMarshaler;
 }
-private booleanisStringArg(charargChar){
-  ArgumentMarshalerm=marshalers.get(argChar);
+private booleanisStringArg(char argChar){
+  ArgumentMarshalerm = marshalers.get(argChar);
   returnminstanceofStringArgumentMarshaler;
 }</code></pre>
 <p>测试继续通过。我跟着消除了对marshaler.get的重复调用：</p>
-<pre class="code-block"><code class="language-java">private booleansetArgument(charargChar)throws
+<pre class="code-block"><code class="language-java">private booleansetArgument(char argChar)throws
 ArgsException{
-  ArgumentMarshalerm=marshalers.get(argChar);
+  ArgumentMarshalerm = marshalers.get(argChar);
   if (isBooleanArg( m ))
-    setBooleanArg(argChar);
-  elseif(isStringArg( m ))
+  setBooleanArg(argChar);
+  else if (isStringArg( m ))
   setStringArg(argChar);
-  elseif(isIntArg( m ))
+  else if (isIntArg( m ))
   setIntArg(argChar);
   else
-    return false;
+  return false;
   return true;
 }
 private booleanisIntArg( ArgumentMarshalerm ){
@@ -6679,278 +6637,273 @@ private booleanisBooleanArg( ArgumentMarshalerm ){
   returnminstanceofBooleanArgumentMarshaler;
 }</code></pre>
 <p>存在三个isxxxArg方法毫无道理。所以我做了内联修改：</p>
-<pre class="code-block"><code class="language-java">private booleansetArgument(charargChar)throws
+<pre class="code-block"><code class="language-java">private booleansetArgument(char argChar)throws
 ArgsException {
-  ArgumentMarshalerm=marshalers.get(argChar);
+  ArgumentMarshalerm = marshalers.get(argChar);
   if ( minstanceofBooleanArgumentMarshaler )
-    setBooleanArg(argChar);
-  elseif( minstanceofStringArgumentMarshaler )
+  setBooleanArg(argChar);
+  else if ( minstanceofStringArgumentMarshaler )
   setStringArg(argChar);
-  elseif( minstanceofIntegerArgumentMarshaler )
+  else if ( minstanceofIntegerArgumentMarshaler )
   setIntArg(argChar);
   else
-    return false;
+  return false;
   return true;
 }</code></pre>
 <p>下一步，我开始在set函数中使用marshaler映射，停止使用另外三个映射映射。从boolean开始：</p>
 <pre class="code-block"><code class="language-java">private boolean setArgument(char argChar) throws ArgsException {
   ArgumentMarshaler m = marshalers.get(argChar);
   if (m instanceof BooleanArgumentMarshaler)
-    setBooleanArg( m );
+  setBooleanArg( m );
   else if (m instanceof StringArgumentMarshaler)
-    setStringArg(argChar);
+  setStringArg(argChar);
   else if (m instanceof IntegerArgumentMarshaler)
-    setIntArg(argChar);
+  setIntArg(argChar);
   else
-    return false;
+  return false;
   return true;
 }
 ...
 private void setBooleanArg( ArgumentMarshaler m ) {
   try {
-    m .set("true"); //
-    was: booleanArgs.get(argChar).set("true") ;
+    m .set("true"); / / was: booleanArgs.get(argChar).set("true") ;
   } catch (ArgsException e) {
   }
 }</code></pre>
 <p>测试通过，于是我如法炮制String和Integer参数。</p>
 <p>这样我就能把有些丑陋的异常管理代码整合到setArgument函数中。</p>
-<pre class="code-block"><code class="language-java">private booleansetArgument(charargChar)throws
+<pre class="code-block"><code class="language-java">private booleansetArgument(char argChar)throws
 ArgsException{
-  ArgumentMarshalerm=marshalers.get(argChar);
+  ArgumentMarshalerm = marshalers.get(argChar);
   try {
     if (minstanceofBooleanArgumentMarshaler)
-      setBooleanArg(m);
-    elseif(minstanceofStringArgumentMarshaler)
+    setBooleanArg(m);
+    else if (minstanceofStringArgumentMarshaler)
     setStringArg( m );
-    elseif(minstanceofIntegerArgumentMarshaler)
+    else if (minstanceofIntegerArgumentMarshaler)
     setIntArg( m );
     else
-      return false;
-  }catch(ArgsExceptione){
-    valid=false;
-    errorArgumentId=argChar;
+    return false;
+  }catch (ArgsException e){
+    valid = false;
+    errorArgumentId = argChar;
     throwe;
   }
   return true;
 }
 private voidsetIntArg( ArgumentMarshalerm )throws
 ArgsException{
-  currentArgument++;
-  String parameter=null;
+  currentArgument + + ;
+  String parameter = null;
   try {
-    parameter=args[currentArgument];
+    parameter = args[currentArgument];
     m .set(parameter);
-  }catch(ArrayIndexOutOfBoundsExceptione){
-    errorCode=ErrorCode.MISSING_INTEGER;
+  }catch (ArrayIndexOutOfBoundsExceptione){
+    errorCode = ErrorCode.MISSING_INTEGER;
     thrownewArgsException();
-  }catch(ArgsExceptione){
-    errorParameter=parameter;
-    errorCode=ErrorCode.INVALID_INTEGER;
+  }catch (ArgsException e){
+    errorParameter = parameter;
+    errorCode = ErrorCode.INVALID_INTEGER;
     throwe;
   }
 }
 private voidsetStringArg( ArgumentMarshalerm )throws
 ArgsException{
-  currentArgument++;
+  currentArgument + + ;
   try {
     m .set(args[currentArgument]);
-  }catch(ArrayIndexOutOfBoundsExceptione){
-    errorCode=ErrorCode.MISSING_STRING;
+  }catch (ArrayIndexOutOfBoundsExceptione){
+    errorCode = ErrorCode.MISSING_STRING;
     thrownewArgsException();
   }
 }</code></pre>
 <p>离彻底删除那3个旧映射的时机越来越近了。首先，我需要修改getBoolean函数：</p>
-<pre class="code-block"><code class="language-java">public booleangetBoolean(chararg){
-  Args.ArgumentMarshaleram=booleanArgs.get(arg);
-  returnam!=null&amp;&amp;(Boolean)am.get();
+<pre class="code-block"><code class="language-java">public boolean getBoolean(chararg){
+  Args.ArgumentMarshaler am = booleanArgs.get(arg);
+  returnam ! = null &amp; &amp; (Boolean)am.get();
 }</code></pre>
 <p>修改成这样：</p>
-<pre class="code-block"><code class="language-java">public booleangetBoolean(chararg){
-  Args.ArgumentMarshaleram=marshalers.get(arg);
-  booleanb=false;
+<pre class="code-block"><code class="language-java">public boolean getBoolean(chararg){
+  Args.ArgumentMarshaler am = marshalers.get(arg);
+  booleanb = false;
   try {
-    b= am!=null&amp;&amp;(Boolean)am.get();
-  }catch(ClassCastExceptione){
-    b=false;
+    b = am ! = null &amp; &amp; (Boolean)am.get();
+  }catch (ClassCastExceptione){
+    b = false;
   }
   returnb;
 }</code></pre>
 <p>最后这个修改可能令人吃惊。为什么我会突然决定对付ClassCastException？原因是我有一组单元测试，还有用FitNesse编写的一组验收测试。</p>
 <p>FitNesse测试确认，如果用非布尔值参数调用getBoolean，应该返回false。可单元测试的结果不是这样。而到此时为止，我一直只调用单元测试[3] 。</p>
 <p>这次修改把另一个对boolean映射的使用抽离了：</p>
-<pre class="code-block"><code class="language-java">private voidparseBooleanSchemaElement(charelementId){
-  ArgumentMarshalerm=new BooleanArgumentMarshaler();
-  booleanArgs.put(elementId,m);
-  marshalers.put(elementId,m);
+<pre class="code-block"><code class="language-java">private voidparseBooleanSchemaElement(char elementId){
+  ArgumentMarshalerm = new BooleanArgumentMarshaler();
+  booleanArgs.put(elementId, m);
+  marshalers.put(elementId, m);
 }</code></pre>
 <p>如此我们就能删除boolean映射。</p>
-<pre class="code-block"><code class="language-java">public classArgs{
+<pre class="code-block"><code class="language-java">public class Args{
   ...
   privateMap&lt;Character,ArgumentMarshaler&gt;booleanArgs = new HashMap&lt;Character,ArgumentMarshaler&gt;();
-  privateMap&lt;Character,ArgumentMarshaler&gt;stringArgs= new HashMap&lt;Character,ArgumentMarshaler&gt;();
-  privateMap&lt;Character,ArgumentMarshaler&gt;intArgs= new HashMap&lt;Character,ArgumentMarshaler&gt;();
-  privateMap&lt;Character,ArgumentMarshaler&gt;marshalers= new HashMap&lt;Character,ArgumentMarshaler&gt;();
+  privateMap&lt;Character,ArgumentMarshaler&gt;stringArgs = new HashMap&lt;Character,ArgumentMarshaler&gt;();
+  privateMap&lt;Character,ArgumentMarshaler&gt;intArgs = new HashMap&lt;Character,ArgumentMarshaler&gt;();
+  privateMap&lt;Character,ArgumentMarshaler&gt;marshalers = new HashMap&lt;Character,ArgumentMarshaler&gt;();
   ...</code></pre>
 <p>接下来，我用同样的手法处理String和Integer参数，对boolean参数做了一点清理工作。</p>
-<pre class="code-block"><code class="language-java">private voidparseBooleanSchemaElement(charelementId){
+<pre class="code-block"><code class="language-java">private voidparseBooleanSchemaElement(char elementId){
   marshalers.put(elementId, new BooleanArgumentMarshaler()
   );
 }
-private voidparseIntegerSchemaElement(charelementId){
+private voidparseIntegerSchemaElement(char elementId){
   marshalers.put(elementId, new IntegerArgumentMarshaler()
   );
 }
-private voidparseStringSchemaElement(charelementId){
+private voidparseStringSchemaElement(char elementId){
   marshalers.put(elementId, new StringArgumentMarshaler()
   );
 }
 ...
 publicStringgetString(chararg){
-  Args.ArgumentMarshaleram= marshalers. get(arg);
+  Args.ArgumentMarshaler am = marshalers. get(arg);
   try {
-    returnam==null?"":(String)am.get();
+    returnam = = null?"":(String)am.get();
   }catch (ClassCastExceptione){
     return"";
   }
 }
-public intgetInt(chararg){
-  Args.ArgumentMarshaleram= marshalers. get(arg);
+public int getInt(chararg){
+  Args.ArgumentMarshaler am = marshalers. get(arg);
   try {
-    returnam==null?0:(Integer)am.get();
-  }catch (Exceptione){
+    returnam = = null?0:(Integer)am.get();
+  }catch (Exception e){
     return0;
   }
 }
 ...
-public classArgs{
+public class Args{
   ...
-  privateMap&lt;Character,ArgumentMarshaler&gt;st ringArgs= new HashMap&lt;Character,ArgumentMarshaler&gt;();
-  privateMap&lt;Character,ArgumentMarshaler&gt;intArgs= new HashMap&lt;Character,ArgumentMarshaler&gt;();
-  privateMap&lt;Character,ArgumentMarshaler&gt;marshalers= new HashMap&lt;Character,ArgumentMarshaler&gt;();
+  privateMap&lt;Character,ArgumentMarshaler&gt;st ringArgs = new HashMap&lt;Character,ArgumentMarshaler&gt;();
+  privateMap&lt;Character,ArgumentMarshaler&gt;intArgs = new HashMap&lt;Character,ArgumentMarshaler&gt;();
+  privateMap&lt;Character,ArgumentMarshaler&gt;marshalers = new HashMap&lt;Character,ArgumentMarshaler&gt;();
   ...</code></pre>
 <p>接着，由于那些parse方法没有太多事可做，我对它们进行了内联修改：</p>
-<pre class="code-block"><code class="language-java">private voidparseSchemaElement(Stringelement)throws
+<pre class="code-block"><code class="language-java">private void parseSchemaElement(String element)throws
 ParseException{
-  charelementId=element.charAt(0);
-  StringelementTail=element.substring(1);
+  char elementId = element.charAt(0);
+  String elementTail = element.substring(1);
   validateSchemaElementId(elementId);
   if (isBooleanSchemaElement(elementTail))
-    marshalers.put(elementId,new
-    BooleanArgumentMarshaler());
-  elseif(isStringSchemaElement(elementTail))
-  marshalers.put(elementId,new
+  marshalers.put(elementId, new
+  BooleanArgumentMarshaler());
+  else if (isStringSchemaElement(elementTail))
+  marshalers.put(elementId, new
   StringArgumentMarshaler());
-  elseif(isIntegerSchemaElement(elementTail)){
-    marshalers.put(elementId,new
+  else if (isIntegerSchemaElement(elementTail)){
+    marshalers.put(elementId, new
     IntegerArgumentMarshaler());
   }else {
     thrownewParseException(String.format(
-    "Argument:%chasinvalidformat:%s.",
-    elementId,elementTail),0);
+    "Argument: % chasinvalidformat: % s.", elementId, elementTail), 0);
   }
 }</code></pre>
 <p>行了，下面来看看全景吧。代码清单14-12展示了Args类的现状。</p>
 <p>代码清单14-12Args.java（首次重构后）</p>
 <pre class="code-block"><code class="language-java">packagecom.objectmentor.utilities.getopts;
 import java.text.ParseException;
-import java.util.*;
-public classArgs{
+import java.util. * ;
+public class Args{
   privateStringschema;
-  private String[]args;
-  private booleanvalid=true;
-  privateSet&lt;Character&gt;unexpectedArguments=new
+  private String[] args;
+  private booleanvalid = true;
+  privateSet&lt;Character&gt;unexpectedArguments = new
   TreeSet&lt;Character&gt;();
-  privateMap&lt;Character,ArgumentMarshaler&gt;marshalers= new HashMap&lt;Character,ArgumentMarshaler&gt;();
-  privateSet&lt;Character&gt;argsFound=new
+  privateMap&lt;Character,ArgumentMarshaler&gt;marshalers = new HashMap&lt;Character,ArgumentMarshaler&gt;();
+  privateSet&lt;Character&gt;argsFound = new
   HashSet&lt;Character&gt;();
   private intcurrentArgument;
-  private charerrorArgumentId='\0';
-  privateStringerrorParameter="TILT";
-  privateErrorCodeerrorCode=ErrorCode.OK;
+  private charerrorArgumentId = '\0';
+  privateStringerrorParameter = "TILT";
+  privateErrorCodeerrorCode = ErrorCode.OK;
   private enumErrorCode{
-    OK,MISSING_STRING,MISSING_INTEGER,INVALID_INTEGER,
-    UNEXPECTED_ARGUMENT}
-    publicArgs(Stringschema,String[]args)throws
+    OK, MISSING_STRING, MISSING_INTEGER, INVALID_INTEGER, UNEXPECTED_ARGUMENT}
+    publicArgs(String schema, String[] args)throws
     ParseException{
-      this.schema=schema;
-      this.args=args;
-      valid=parse();
+      this.schema = schema;
+      this.args = args;
+      valid = parse();
     }
     private booleanparse()throws ParseException{
-      if (schema.length()==0&amp;&amp;args.length==0)
-        return true;
+      if (schema.length() = = 0 &amp; &amp; args.length = = 0)
+      return true;
       parseSchema();
       try {
         parseArguments();
-      }catch (ArgsExceptione){
+      }catch (ArgsException e){
       }
       returnvalid;
     }
     private booleanparseSchema()throws ParseException{
-      for (Stringelement:schema.split(",")){
-        if (element.length()&gt;0){
-          StringtrimmedElement=element.trim();
+      for (String element:schema.split(", ")){
+        if (element.length() &gt; 0){
+          StringtrimmedElement = element.trim();
           parseSchemaElement(trimmedElement);
         }
       }
       return true;
     }
-    private voidparseSchemaElement(Stringelement)throws
+    private void parseSchemaElement(String element)throws
     ParseException{
-      charelementId=element.charAt(0);
-      StringelementTail=element.substring(1);
+      char elementId = element.charAt(0);
+      String elementTail = element.substring(1);
       validateSchemaElementId(elementId);
       if (isBooleanSchemaElement(elementTail))
-        marshalers.put(elementId,new
-        BooleanArgumentMarshaler());
-      elseif (isStringSchemaElement(elementTail))
-      marshalers.put(elementId,new
+      marshalers.put(elementId, new
+      BooleanArgumentMarshaler());
+      else if (isStringSchemaElement(elementTail))
+      marshalers.put(elementId, new
       StringArgumentMarshaler());
-      elseif(isIntegerSchemaElement(elementTail)){
-        marshalers.put(elementId,new
+      else if (isIntegerSchemaElement(elementTail)){
+        marshalers.put(elementId, new
         IntegerArgumentMarshaler());
       }else {
         thrownewParseException(String.format(
-        "Argument:%chasinvalidformat:%s.",
-        elementId,elementTail),0);
+        "Argument: % chasinvalidformat: % s.", elementId, elementTail), 0);
       }
     }
-    private voidvalidateSchemaElementId(charelementId) throws ParseException{
+    private void validateSchemaElementId(char elementId) throws ParseException{
       if (!Character.isLetter(elementId)){
         thrownewParseException(
-        "Badcharacter:"+elementId+"inArgsformat
-        :"+schema,0);
+        "Bad character:" + elementId + "in Args format:" + schema, 0);
       }
     }
-    private booleanisStringSchemaElement(StringelementTail
+    private booleanisStringSchemaElement(String elementTail
     ){
-      returnelementTail.equals("*");
+      returnelementTail.equals(" * ");
     }
-    private booleanisBooleanSchemaElement(StringelementTail
+    private booleanisBooleanSchemaElement(String elementTail
     ){
-      returnelementTail.length()==0;
+      returnelementTail.length() = = 0;
     }
-    private booleanisIntegerSchemaElement(StringelementTail
+    private booleanisIntegerSchemaElement(String elementTail
     ){
       returnelementTail.equals("#");
     }
     private booleanparseArguments()throws ArgsException{
-      for (currentArgument=0;currentArgument&lt;args.length;
-      currentArgument++){
-        Stringarg=args[currentArgument];
+      for (currentArgument = 0;currentArgument &lt; args.length;
+      currentArgument + + ){
+        Stringarg = args[currentArgument];
         parseArgument(arg);
       }
       return true;
     }
     private voidparseArgument(Stringarg)throws
     ArgsException{
-      if (arg.startsWith("-"))
-        parseElements(arg);
+      if (arg.startsWith(" - "))
+      parseElements(arg);
     }
     private voidparseElements(Stringarg)throws
     ArgsException{
-      for (inti=1;i&lt;arg.length();i++)
+      for (int i = 1;i&lt;arg.length();i++)
         parseElement(arg.charAt(i));
     }
     private voidparseElement(charargChar)throws
@@ -7019,86 +6972,81 @@ public classArgs{
     }
     publicStringusage(){
       if (schema.length()&gt;0)
-        return"-["+schema+"]";
+      return" - [" + schema + "]";
       else
-        return"";
+      return"";
     }
     publicStringerrorMessage()throws Exception{
       switch (errorCode){
         case OK:
-        thrownewException("TILT:Shouldnotgethere
-        .");
+        thrownewException("TILT: Should not get here.");
         case UNEXPECTED_ARGUMENT:
         returnunexpectedArgumentMessage();
         case MISSING_STRING:
-        returnString.format("Couldnotfindstringparameterfor
-        -%c.",
+        returnString.format("Could not find string parameter for - % c.",
         errorArgumentId);
         case INVALID_INTEGER:
-        returnString.format("Argument-%cexpectsanintegerbutwas
-        '%s'.",
-        errorArgumentId,
-        errorParameter);
+        returnString.format("Argument - % c expects an integer but was' % s'.",
+        errorArgumentId, errorParameter);
         case MISSING_INTEGER:
-        returnString.format("Couldnotfindintegerparameterfor
-        -%c.",
+        returnString.format("Could not find integer parameter for - % c.",
         errorArgumentId);
       }
       return"";
     }
     privateStringunexpectedArgumentMessage(){
-      StringBuffermessage=new
-      StringBuffer("Argument(s)-");
+      StringBuffermessage = new
+      StringBuffer("Argument(s) - ");
       for (charc:unexpectedArguments){
         message.append(c);
       }
       message.append("unexpected.");
       returnmessage.toString();
     }
-    public booleangetBoolean(chararg){
-      Args.ArgumentMarshaleram=marshalers.get(arg);
-      booleanb=false;
+    public boolean getBoolean(chararg){
+      Args.ArgumentMarshaler am = marshalers.get(arg);
+      booleanb = false;
       try {
-        b=am!=null&amp;&amp;(Boolean)am.get();
+        b = am ! = null &amp; &amp; (Boolean)am.get();
       }catch (ClassCastExceptione){
-        b=false;
+        b = false;
       }
       returnb;
     }
     publicStringgetString(chararg){
-      Args.ArgumentMarshaleram=marshalers.get(arg);
+      Args.ArgumentMarshaler am = marshalers.get(arg);
       try {
-        returnam==null?"":(String)am.get();
+        returnam = = null?"":(String)am.get();
       }catch (ClassCastExceptione){
         return"";
       }
     }
-    public intgetInt(chararg){
-      Args.ArgumentMarshaleram=marshalers.get(arg);
+    public int getInt(chararg){
+      Args.ArgumentMarshaler am = marshalers.get(arg);
       try {
-        returnam==null?0:(Integer)am.get();
-      }catch (Exceptione){
+        returnam = = null?0:(Integer)am.get();
+      }catch (Exception e){
         return0;
       }
     }
-    public booleanhas(chararg){
+    public boolean has(chararg){
       returnargsFound.contains(arg);
     }
-    public booleanisValid(){
+    public boolean isValid(){
       returnvalid;
     }
     private classArgsExceptionextendsException{
     }
     private abstractclassArgumentMarshaler{
-      public abstractvoidset(Strings)throws
+      public abstractvoidset(String s)throws
       ArgsException;
       public abstractObjectget();
     }
     private classBooleanArgumentMarshalerextendsArgumentMarshaler
     {
-      private booleanbooleanValue=false;
-      public voidset(Strings){
-        booleanValue=true;
+      private booleanbooleanValue = false;
+      public void set(String s){
+        booleanValue = true;
       }
       publicObjectget(){
         returnbooleanValue;
@@ -7106,9 +7054,9 @@ public classArgs{
     }
     private classStringArgumentMarshalerextendsArgumentMarshaler
     {
-      privateStringstringValue="";
-      public voidset(Strings){
-        stringValue=s;
+      privateStringstringValue = "";
+      public void set(String s){
+        stringValue = s;
       }
       publicObjectget(){
         returnstringValue;
@@ -7116,11 +7064,11 @@ public classArgs{
     }
     private classIntegerArgumentMarshalerextendsArgumentMarshaler
     {
-      private intintValue=0;
-      public voidset(Strings)throws ArgsException{
+      private intintValue = 0;
+      public void set(String s)throws ArgsException{
         try {
-          intValue=Integer.parseInt(s);
-        }catch (NumberFormatExceptione){
+          intValue = Integer.parseInt(s);
+        }catch (NumberFormatException e){
           thrownewArgsException();
         }
       }
@@ -7132,123 +7080,119 @@ public classArgs{
 <p>功夫费尽，还是有点失望。程序结构好了一点，但在代码顶端还是有那一堆变量；在setArgument里面还是有那么恐怖的类型转换操作；而且那些set函数真的很丑陋。就别提那些错误处理操作了。前头要做的事还很多。</p>
 <p>我真是想删掉setArgument里面那些类型转换操作[G23]。我想要setArgument只简单地调用ArgumentMarshaler.set。这意味着我需要将setIntArg、setStringArg和setBooleanArg推到合适的ArgumentMarshaler派生类里面。不过这有个问题。</p>
 <p>仔细看setIntArg，你会发现，它使用了两个实体变量：args和currentArg。为了把setIntArg移到BooleanARgumentMarshaler里面，我得把这两个变量都作为函数参数传递过去。那种做法太烂了[F1]。我只想传递一个参数。幸运的是，有个简单的解决方法。可以把args数组转换为一个list，并向set函数传递一个Iterator。这花了我10步功夫，每次都通过了测试。不过我只向你展示结果。你应该能看出每个小修改步骤。</p>
-<pre class="code-block"><code class="language-java">public classArgs{
- privateStringschema;
- private String[]args;
- private booleanvalid=true;
- privateSet&lt;Character&gt;unexpectedArguments=new
- TreeSet&lt;Character&gt;();
- privateMap&lt;Character,ArgumentMarshaler&gt;marshalers= new HashMap&lt;Character,ArgumentMarshaler&gt;();
- privateSet&lt;Character&gt;argsFound=new
- HashSet&lt;Character&gt;();
- private Iterator&lt;String&gt; currentArgument;
- private charerrorArgumentId='\0';
- privateStringerrorParameter="TILT";
- privateErrorCodeerrorCode=ErrorCode.OK;
- privateList&lt;String&gt;argsList;
- private enumErrorCode{
-  OK,MISSING_STRING,MISSING_INTEGER,INVALID_INTEGER,
-  UNEXPECTED_ARGUMENT}
-  publicArgs(Stringschema,String[]args)throws
-  ParseException{
-   this.schema=schema;
-   argsList=Arrays.asList(args);
-   valid=parse();
-  }
-  private booleanparse()throws ParseException{
-   if (schema.length()==0&amp;&amp; argsList.size() ==0)
-    return true;
-   parseSchema();
-   try {
-    parseArguments();
-   }catch (ArgsExceptione){
-   }
-   returnvalid;
-  }
-  ---
-  private booleanparseArguments()throws ArgsException{
-   for (currentArgument= argsList.iterator();
-   currentArgument. hasNext(); ){
-    Stringarg=currentArgument.next();
-    parseArgument(arg);
-   }
-   retun true;
-  }
-  ---
-  private voidsetIntArg(ArgumentMarshalerm)throws
-  ArgsException{
-   String parameter=null;
-   try {
-    parameter=currentArgument. next ();
-    m.set(parameter);
-   }catch ( NoSuchElementException e){
-    errorCode=ErrorCode.MISSING_INTEGER;
-    thrownewArgsException();
-   }catch (ArgsExceptione){
-    errorParameter=parameter;
-    errorCode=ErrorCode.INVALID_INTEGER;
-    throwe;
-   }
-  }
-  private voidsetStringArg(ArgumentMarshalerm)throws
-  ArgsException{
-   try {
-    m.set(currentArgument. next ());
-   }catch ( NoSuchElementException e){
-    errorCode=ErrorCode.MISSING_STRING;
-    thrownewArgsException();
-   }
-  }</code></pre>
+<pre class="code-block"><code class="language-java">public class Args{
+  privateStringschema;
+  private String[] args;
+  private booleanvalid = true;
+  privateSet&lt;Character&gt;unexpectedArguments = new
+  TreeSet&lt;Character&gt;();
+  privateMap&lt;Character,ArgumentMarshaler&gt;marshalers = new HashMap&lt;Character,ArgumentMarshaler&gt;();
+  privateSet&lt;Character&gt;argsFound = new
+  HashSet&lt;Character&gt;();
+  private Iterator&lt;String&gt; currentArgument;
+  private charerrorArgumentId = '\0';
+  privateStringerrorParameter = "TILT";
+  privateErrorCodeerrorCode = ErrorCode.OK;
+  privateList&lt;String&gt;argsList;
+  private enumErrorCode{
+    OK, MISSING_STRING, MISSING_INTEGER, INVALID_INTEGER, UNEXPECTED_ARGUMENT}
+    publicArgs(String schema, String[] args)throws
+    ParseException{
+      this.schema = schema;
+      argsList = Arrays.asList(args);
+      valid = parse();
+    }
+    private booleanparse()throws ParseException{
+      if (schema.length() = = 0 &amp; &amp; argsList.size() = = 0)
+      return true;
+      parseSchema();
+      try {
+        parseArguments();
+      }catch (ArgsException e){
+      }
+      returnvalid;
+    }
+    - - - private booleanparseArguments()throws ArgsException{
+      for (currentArgument = argsList.iterator();
+      currentArgument. hasNext(); ){
+        Stringarg = currentArgument.next();
+        parseArgument(arg);
+      }
+      return true;
+    }
+    - - - private voidsetIntArg(ArgumentMarshalerm)throws
+    ArgsException{
+      String parameter = null;
+      try {
+        parameter = currentArgument. next ();
+        m.set(parameter);
+      }catch ( NoSuchElementException e){
+        errorCode = ErrorCode.MISSING_INTEGER;
+        thrownewArgsException();
+      }catch (ArgsException e){
+        errorParameter = parameter;
+        errorCode = ErrorCode.INVALID_INTEGER;
+        throwe;
+      }
+    }
+    private voidsetStringArg(ArgumentMarshalerm)throws
+    ArgsException{
+      try {
+        m.set(currentArgument. next ());
+      }catch ( NoSuchElementException e){
+        errorCode = ErrorCode.MISSING_STRING;
+        thrownewArgsException();
+      }
+    }</code></pre>
 <p>是这些简单的修改让测试保持通过。现在我们可以开始把set函数移植到合适的派生类中了。第一步，我要在setArgument中做以下修改：</p>
-<pre class="code-block"><code class="language-java">private booleansetArgument(charargChar)throws
+<pre class="code-block"><code class="language-java">private booleansetArgument(char argChar)throws
 ArgsException{
-  ArgumentMarshalerm=marshalers.get(argChar);
-  if (m==null)
-    return false;
+  ArgumentMarshalerm = marshalers.get(argChar);
+  if (m = = null)
+  return false;
   try {
     if (minstanceofBooleanArgumentMarshaler)
-      setBooleanArg(m);
-    elseif(minstanceofStringArgumentMarshaler)
+    setBooleanArg(m);
+    else if (minstanceofStringArgumentMarshaler)
     setStringArg(m);
-    elseif(minstanceofIntegerArgumentMarshaler)
+    else if (minstanceofIntegerArgumentMarshaler)
     setIntArg(m);
     else
-      return false;
-  }catch(ArgsExceptione){
-    valid=false;
-    errorArgumentId=argChar;
+    return false;
+  }catch (ArgsException e){
+    valid = false;
+    errorArgumentId = argChar;
     throwe;
   }
   return true;
 }</code></pre>
 <p>这个修改很重要，因为我们想要彻底删除那条if-else链。所以，需要把错误条件抽离。</p>
 <p>现在可以开始移动set函数了。setBooleanArg函数很小，就从它开始。目标是让setBooleanArg函数只与BooleanArgumentMarshaler有关。</p>
-<pre class="code-block"><code class="language-java">private booleansetArgument(charargChar)throws
+<pre class="code-block"><code class="language-java">private booleansetArgument(char argChar)throws
 ArgsException{
-  ArgumentMarshalerm=marshalers.get(argChar);
-  if (m==null)
-    return false;
+  ArgumentMarshalerm = marshalers.get(argChar);
+  if (m = = null)
+  return false;
   try {
     if (minstanceofBooleanArgumentMarshaler)
-      setBooleanArg(m, currentArgument );
-    elseif(minstanceofStringArgumentMarshaler)
+    setBooleanArg(m, currentArgument );
+    else if (minstanceofStringArgumentMarshaler)
     setStringArg(m);
-    elseif(minstanceofIntegerArgumentMarshaler)
+    else if (minstanceofIntegerArgumentMarshaler)
     setIntArg(m);
-  }catch(ArgsExceptione){
-    valid=false;
-    errorArgumentId=argChar;
+  }catch (ArgsException e){
+    valid = false;
+    errorArgumentId = argChar;
     throwe;
   }
   return true;
 }
----
-private voidsetBooleanArg(ArgumentMarshalerm,
+- - - private voidsetBooleanArg(ArgumentMarshalerm,
 Iterator&lt;String&gt;
 currentArgument) throws ArgsException{
   try {
     m.set("true");
-    catch(ArgsExceptione){
+    catch (ArgsException e){
     }
   }</code></pre>
 <p>我们不是刚把那个异常处理放进去吗？放进拿出是重构过程中常见的事。小步幅和保持测试通过，意味着你会不断移动各种东西。重构有点像是解魔方。需要经过许多小步骤，才能达到较大目标。每一步都是下一步的基础。</p>
@@ -7257,19 +7201,19 @@ currentArgument) throws ArgsException{
 <pre class="code-block"><code class="language-java">private abstractclassArgumentMarshaler{
   public abstractvoidset(Iterator&lt;String&gt;
   currentArgument) throws ArgsException;
-  public abstractvoidset(Strings)throws
+  public abstractvoidset(String s)throws
   ArgsException;
   public abstractObjectget();
 }</code></pre>
 <p>当然，这会影响到所有派生类。所以，要逐个实现新方法。</p>
 <pre class="code-block"><code class="language-java">private classBooleanArgumentMarshalerextendsArgumentMarshaler
 {
-  private booleanbooleanValue=false;
-  public voidset(Iterator&lt;String&gt;currentArgument) throws ArgsException{
-    booleanValue=true;
+  private booleanbooleanValue = false;
+  public void set(Iterator&lt;String&gt;currentArgument) throws ArgsException{
+    booleanValue = true;
   }
-  public voidset(Strings){
-    booleanValue=true;
+  public void set(String s){
+    booleanValue = true;
   }
   publicObjectget(){
     returnbooleanValue;
@@ -7277,11 +7221,11 @@ currentArgument) throws ArgsException{
 }
 private classStringArgumentMarshalerextendsArgumentMarshaler
 {
-  privateStringstringValue="";
-  public voidset(Iterator&lt;String&gt;currentArgument) throws ArgsException{
+  privateStringstringValue = "";
+  public void set(Iterator&lt;String&gt;currentArgument) throws ArgsException{
   }
-  public voidset(Strings){
-    stringValue=s;
+  public void set(String s){
+    stringValue = s;
   }
   publicObjectget(){
     returnstringValue;
@@ -7289,13 +7233,13 @@ private classStringArgumentMarshalerextendsArgumentMarshaler
 }
 private classIntegerArgumentMarshalerextendsArgumentMarshaler
 {
-  private intintValue=0;
-  public voidset(Iterator&lt;String&gt;currentArgument) throws ArgsException{
+  private intintValue = 0;
+  public void set(Iterator&lt;String&gt;currentArgument) throws ArgsException{
   }
-  public voidset(Strings)throws ArgsException{
+  public void set(String s)throws ArgsException{
     try {
-      intValue=Integer.parseInt(s);
-    }catch (NumberFormatExceptione){
+      intValue = Integer.parseInt(s);
+    }catch (NumberFormatException e){
       thrownewArgsException();
     }
   }
@@ -7304,58 +7248,57 @@ private classIntegerArgumentMarshalerextendsArgumentMarshaler
   }
 }</code></pre>
 <p>现在可以删除setBooleanArg了！</p>
-<pre class="code-block"><code class="language-java">private booleansetArgument(charargChar)throws
+<pre class="code-block"><code class="language-java">private booleansetArgument(char argChar)throws
 ArgsException{
-  ArgumentMarshalerm=marshalers.get(argChar);
-  if (m==null)
-    return false;
+  ArgumentMarshalerm = marshalers.get(argChar);
+  if (m = = null)
+  return false;
   try {
     if (minstanceofBooleanArgumentMarshaler)
-      m.set (currentArgument);
-    elseif(minstanceofStringArgumentMarshaler)
+    m.set (currentArgument);
+    else if (minstanceofStringArgumentMarshaler)
     setStringArg(m);
-    elseif(minstanceofIntegerArgumentMarshaler)
+    else if (minstanceofIntegerArgumentMarshaler)
     setIntArg(m);
-  }catch(ArgsExceptione){
-    valid=false;
-    errorArgumentId=argChar;
+  }catch (ArgsException e){
+    valid = false;
+    errorArgumentId = argChar;
     throwe;
   }
   return true;
 }</code></pre>
 <p>测试全都通过，而且set函数也部署到BooleanArgumentMarshaler里面了！</p>
 <p>现在就能对String和Integer参数的处理做同样的修改。</p>
-<pre class="code-block"><code class="language-java">private booleansetArgument(charargChar)throws
+<pre class="code-block"><code class="language-java">private booleansetArgument(char argChar)throws
 ArgsException{
-  ArgumentMarshalerm=marshalers.get(argChar);
-  if (m== null)
-    return false;
+  ArgumentMarshalerm = marshalers.get(argChar);
+  if (m = = null)
+  return false;
   try {
     if (minstanceofBooleanArgumentMarshaler)
-      m.set(currentArgument);
-    elseif(minstanceofStringArgumentMarshaler)
     m.set(currentArgument);
-    elseif(minstanceofIntegerArgumentMarshaler)
+    else if (minstanceofStringArgumentMarshaler)
     m.set(currentArgument);
-  }catch (ArgsExceptione){
-    valid=false;
-    errorArgumentId=argChar;
+    else if (minstanceofIntegerArgumentMarshaler)
+    m.set(currentArgument);
+  }catch (ArgsException e){
+    valid = false;
+    errorArgumentId = argChar;
     throwe;
   }
   return true;
-}---
-private classStringArgumentMarshalerextendsArgumentMarshaler
+} - - - private classStringArgumentMarshalerextendsArgumentMarshaler
 {
-  privateStringstringValue="";
-  public voidset(Iterator&lt;String&gt;currentArgument) throws ArgsException{
+  privateStringstringValue = "";
+  public void set(Iterator&lt;String&gt;currentArgument) throws ArgsException{
     try {
-      stringValue=currentArgument.next();
-    }catch (NoSuchElementExceptione){
-      errorCode=ErrorCode.MISSING_STRING;
+      stringValue = currentArgument.next();
+    }catch (NoSuchElementException e){
+      errorCode = ErrorCode.MISSING_STRING;
       thrownewArgsException();
     }
   }
-  public voidset(Strings){
+  public void set(String s){
   }
   publicObjectget(){
     returnstringValue;
@@ -7363,25 +7306,25 @@ private classStringArgumentMarshalerextendsArgumentMarshaler
 }
 private classIntegerArgumentMarshalerextendsArgumentMarshaler
 {
-  private intintValue=0;
-  public voidset(Iterator&lt;String&gt;currentArgument) throws ArgsException{
-    String parameter=null;
+  private intintValue = 0;
+  public void set(Iterator&lt;String&gt;currentArgument) throws ArgsException{
+    String parameter = null;
     try {
-      parameter=currentArgument.next();
+      parameter = currentArgument.next();
       set(parameter);
-    }catch (NoSuchElementExceptione){
-      errorCode=ErrorCode.MISSING_INTEGER;
+    }catch (NoSuchElementException e){
+      errorCode = ErrorCode.MISSING_INTEGER;
       thrownewArgsException();
-    }catch (ArgsExceptione){
-      errorParameter=parameter;
-      errorCode=ErrorCode.INVALID_INTEGER;
+    }catch (ArgsException e){
+      errorParameter = parameter;
+      errorCode = ErrorCode.INVALID_INTEGER;
       throwe;
     }
   }
-  public voidset(Strings)throws ArgsException{
+  public void set(String s)throws ArgsException{
     try {
-      intValue=Integer.parseInt(s);
-    }catch (NumberFormatExceptione){
+      intValue = Integer.parseInt(s);
+    }catch (NumberFormatException e){
       thrownewArgsException();
     }
   }
@@ -7390,35 +7333,35 @@ private classIntegerArgumentMarshalerextendsArgumentMarshaler
   }
 }</code></pre>
 <p><strong>最后一击</strong> ：可以移除类型转换了！看招！</p>
-<pre class="code-block"><code class="language-java">private booleansetArgument(charargChar)throws
+<pre class="code-block"><code class="language-java">private booleansetArgument(char argChar)throws
 ArgsException{
-  ArgumentMarshalerm=marshalers.get(argChar);
-  if (m==null)
-    return false;
+  ArgumentMarshalerm = marshalers.get(argChar);
+  if (m = = null)
+  return false;
   try {
     m.set(currentArgument);
     return true;
-  }catch(ArgsExceptione){
-    valid=false;
-    errorArgumentId=argChar;
+  }catch (ArgsException e){
+    valid = false;
+    errorArgumentId = argChar;
     throwe;
   }
 }</code></pre>
 <p>现在可以删掉IntegerArgumentMarshaler中那些过时的函数，做一下清理了。</p>
 <pre class="code-block"><code class="language-java">private classIntegerArgumentMarshalerextendsArgumentMarshaler
 {
-  private intintValue=0
-  public voidset(Iterator&lt;String&gt;currentArgument) throws ArgsException{
-    String parameter =null;
+  private intintValue = 0
+  public void set(Iterator&lt;String&gt;currentArgument) throws ArgsException{
+    String parameter = null;
     try {
-      parameter=currentArgument.next();
-      intValue=Integer.parseInt (parameter);
-    }catch (NoSuchElementExceptione){
-      errorCode=ErrorCode.MISSING_INTEGER;
+      parameter = currentArgument.next();
+      intValue = Integer.parseInt (parameter);
+    }catch (NoSuchElementException e){
+      errorCode = ErrorCode.MISSING_INTEGER;
       thrownewArgsException();
     }catch ( NumberFormatException e){
-      errorParameter=parameter;
-      errorCode=ErrorCode.INVALID_INTEGER;
+      errorParameter = parameter;
+      errorCode = ErrorCode.INVALID_INTEGER;
       thrownewArgsException();
     }
   }
@@ -7428,58 +7371,56 @@ ArgsException{
 }</code></pre>
 <p>还可以把ArgumentMarshaler修改为接口。</p>
 <pre class="code-block"><code class="language-java">private interface ArgumentMarshaler{
-  voidset(Iterator&lt;String&gt;currentArgument)throws
+  void set(Iterator&lt;String&gt;currentArgument)throws
   ArgsException;
   Objectget();
 }</code></pre>
 <p>现在来看看往这个结构中添加新的参数类型有多容易。只需要做少量修改，而且修改是被隔离的。首先，增加一个新的测试用例，检测double参数是否正常工作。</p>
 <pre class="code-block"><code class="language-java">public voidtestSimpleDoublePresent()throws Exception {
-  Argsargs=new Args("x##",new String[]{"-
-    x","42.3"});
-    assertTrue(args.isValid());
-    assertEquals(1,args.cardinality());
-    assertTrue(args.has('x'));
-    assertEquals(42.3,args.getDouble('x'),.001);
-  }</code></pre>
+  Argsargs = new Args("x##", new String[]{" - x", "42.3"});
+  assertTrue(args.isValid());
+  assertEquals(1, args.cardinality());
+  assertTrue(args.has('x'));
+  assertEquals(42.3, args.getDouble('x'), .001);
+}</code></pre>
 <p>然后清理范式解析代码，为double参数类型添加##监测。</p>
-<pre class="code-block"><code class="language-java">private voidparseSchemaElement(Stringelement)throws
+<pre class="code-block"><code class="language-java">private void parseSchemaElement(String element)throws
 ParseException{
-  charelementId=element.charAt(0);
-  StringelementTail=element.substring(1);
+  char elementId = element.charAt(0);
+  String elementTail = element.substring(1);
   validateSchemaElementId(elementId);
-  if (elementTail. length() ==0)
-    marshalers.put(elementId,new
-    BooleanArgumentMarshaler());
-  elseif(elementTail. equals("*") )
-  marshalers.put(elementId,new
+  if (elementTail. length() = = 0)
+  marshalers.put(elementId, new
+  BooleanArgumentMarshaler());
+  else if (elementTail. equals(" * ") )
+  marshalers.put(elementId, new
   StringArgumentMarshaler());
-  elseif(elementTail. equals("#") )
-  marshalers.put(elementId,new
+  else if (elementTail. equals("#") )
+  marshalers.put(elementId, new
   IntegerArgumentMarshaler());
-  elseif(elementTail.equals("##"))
-  marshalers.put(elementId,new
+  else if (elementTail.equals("##"))
+  marshalers.put(elementId, new
   DoubleArgumentMarshaler());
   else
-    thrownewParseException(String.format(
-    "Argument:%chasinvalidformat:%s.",
-    elementId,elementTail),0);
+  thrownewParseException(String.format(
+  "Argument: % chasinvalidformat: % s.", elementId, elementTail), 0);
 }</code></pre>
 <p>下一步，编写DoubleArgumentMarshaler类。</p>
 <pre class="code-block"><code class="language-java">private classDoubleArgumentMarshalerimplementsArgumentMarshaler
 {
-  private doubledoubleValue=0;
-  public voidset(Iterator&lt;String&gt;currentArgument)throws
+  private doubledoubleValue = 0;
+  public void set(Iterator&lt;String&gt;currentArgument)throws
   ArgsException{
-    String parameter=null;
+    String parameter = null;
     try {
-      parameter=currentArgument.next();
-      doubleValue=Double.parseDouble(parameter);
-    } catch(NoSuchElementExceptione){
-      errorCode=ErrorCode.MISSING_DOUBLE;
+      parameter = currentArgument.next();
+      doubleValue = Double.parseDouble(parameter);
+    } catch (NoSuchElementException e){
+      errorCode = ErrorCode.MISSING_DOUBLE;
       thrownewArgsException();
-    } catch(NumberFormatExceptione){
-      errorParameter=parameter;
-      errorCode=ErrorCode.INVALID_DOUBLE;
+    } catch (NumberFormatException e){
+      errorParameter = parameter;
+      errorCode = ErrorCode.INVALID_DOUBLE;
       thrownewArgsException();
     }
   }
@@ -7489,203 +7430,187 @@ ParseException{
 }</code></pre>
 <p>然后就得添加一个新的ErrorCode：</p>
 <pre class="code-block"><code class="language-java">private enumErrorCode{
-  OK,MISSING_STRING,MISSING_INTEGER,INVALID_INTEGER,
-  UNEXPECTED_ARGUMENT,
-  MISSING_DOUBLE,INVALID_DOUBLE}</code></pre>
+  OK, MISSING_STRING, MISSING_INTEGER, INVALID_INTEGER, UNEXPECTED_ARGUMENT,
+  MISSING_DOUBLE, INVALID_DOUBLE}</code></pre>
 <p>还需要一个getDouble函数：</p>
-<pre class="code-block"><code class="language-java">public doublegetDouble(chararg){
-  Args.ArgumentMarshaleram=marshalers.get(arg);
+<pre class="code-block"><code class="language-java">public double getDouble(chararg){
+  Args.ArgumentMarshaler am = marshalers.get(arg);
   try {
-    returnam==null?0:(Double)am.get();
-  }catch(Exceptione){
+    returnam = = null?0:(Double)am.get();
+  }catch (Exception e){
     return0.0;
   }
 }</code></pre>
 <p>全部测试都通过了！完全无痛。再来确保全部错误处理代码正确工作。下一个测试用例用来检测在向##参数传递一个不可解析的字符串时是否会返回错误。</p>
 <pre class="code-block"><code class="language-java">public voidtestInvalidDouble()throws Exception{
-  Argsargs=new Args("x##",new String[]{"-x","Fortytwo
-    "});
-    assertFalse(args.isValid());
-    assertEquals(0,args.cardinality());
-    assertFalse(args.has('x'));
-    assertEquals(0,args.getInt('x'));
-    assertEquals("Argument-xexpectsadoublebutwas
-    'Fortytwo'.",
-    args.errorMessage());
-  }
-  ---
-  publicStringerrorMessage()throws Exception{
-    switch (errorCode){
-      case OK:
-      thrownewException("TILT:Shouldnotgethere.");
-      case UNEXPECTED_ARGUMENT:
+  Argsargs = new Args("x##", new String[]{" - x", "Fortytwo"});
+  assertFalse(args.isValid());
+  assertEquals(0, args.cardinality());
+  assertFalse(args.has('x'));
+  assertEquals(0, args.getInt('x'));
+  assertEquals("Argument - xexpectsadoublebutwas'Fortytwo'.",
+  args.errorMessage());
+}
+- - - publicStringerrorMessage()throws Exception{
+  switch (errorCode){
+    case OK:
+    thrownewException("TILT: Should not get here.");
+    case UNEXPECTED_ARGUMENT:
     returnunexpectedArgumentMessage();
     case MISSING_STRING:
-    returnString.format("Couldnotfindstringparameterfor
-    -%c.",
+    returnString.format("Could not find string parameter for - % c.",
     errorArgumentId);
     case INVALID_INTEGER:
-    returnString.format("Argument-%cexpectsanintegerbutwas
-    '%s'.",
-    errorArgumentId,
-    errorParameter);
+    returnString.format("Argument - % c expects an integer but was' % s'.",
+    errorArgumentId, errorParameter);
     case MISSING_INTEGER:
-    returnString.format("Couldnotfindintegerparameterfor
-    -%c.",
+    returnString.format("Could not find integer parameter for - % c.",
     errorArgumentId);
     case INVALID_DOUBLE:
-    returnString.format("Argument-%cexpectsadoublebutwas
-    '%s'.",
-    errorArgumentId,
-    errorParameter);
+    returnString.format("Argument - % c expects a double but was' % s'.",
+    errorArgumentId, errorParameter);
     case MISSING_DOUBLE:
-    returnString.format("Couldnotfinddoubleparameterfor
-    -%c.",
+    returnString.format("Could not find double parameter for - % c.",
     errorArgumentId);
   }
   return"";
 }</code></pre>
 <p>测试通过。下一个测试确保我们正确检测到遗漏的double参数。</p>
 <pre class="code-block"><code class="language-java">public voidtestMissingDouble()throws Exception{
-  Argsargs=new Args("x##",new String[]{"-x"});
+  Argsargs = new Args("x##", new String[]{" - x"});
   assertFalse(args.isValid());
-  assertEquals(0,args.cardinality());
+  assertEquals(0, args.cardinality());
   assertFalse(args.has('x'));
-  assertEquals(0.0,args.getDouble('x'),0.01);
-  assertEquals("Couldnotfinddoubleparameterfor-
-  x.",
+  assertEquals(0.0, args.getDouble('x'), 0.01);
+  assertEquals("Could not find double parameter for - x.",
   args.errorMessage());
 }</code></pre>
 <p>测试如期通过。我们只是为了保持一切完整而编写这个测试。</p>
 <p>异常代码很丑陋，不该在Args类中存在。我们也抛出ParseException，但那并不真的属于我们自己。那就把所有异常都塞到ArgsException类中，并将其移到它自己的模块里面。</p>
 <pre class="code-block"><code class="language-java">public classArgsExceptionextendsException{
- private charerrorArgumentId='\0';
- privateStringerrorParameter="TILT";
- privateErrorCodeerrorCode=ErrorCode.OK;
- publicArgsException(){}
- publicArgsException(Stringmessage){super(message);}
- public enumErrorCode{
-  OK,MISSING_STRING,MISSING_INTEGER,INVALID_INTEGER,
-  UNEXPECTED_ARGUMENT,
-  MISSING_DOUBLE,INVALID_DOUBLE}
- }
- ---
- public classArgs{
-  ...
-  private charerrorArgumentId='\0';
-  privateStringerrorParameter="TILT";
-  private ArgsException. ErrorCodeerrorCode= ArgsException. ErrorCode.OK;
-  privateList&lt;String&gt;argsList;
-  publicArgs(Stringschema,String[]args)throws
-  ArgsException {
-   this.schema=schema;
-   argsList=Arrays.asList(args);
-   valid=parse();
+  private charerrorArgumentId = '\0';
+  privateStringerrorParameter = "TILT";
+  privateErrorCodeerrorCode = ErrorCode.OK;
+  publicArgsException(){}
+  publicArgsException(String message){super(message);}
+  public enumErrorCode{
+    OK, MISSING_STRING, MISSING_INTEGER, INVALID_INTEGER, UNEXPECTED_ARGUMENT,
+    MISSING_DOUBLE, INVALID_DOUBLE}
   }
-  private booleanparse()throws ArgsException{
-   if (schema.length()==0&amp;&amp;argsList.size()==0)
-    return true;
-   parseSchema();
-   try {
-    parseArguments();
-   }catch ( ArgsException e){
-   }
-   returnvalid;
-  }
-  private booleanparseSchema()throws ArgsException {
-   ...
-  }
-  private voidparseSchemaElement(Stringelement)throws
-  ArgsException {
-   ...
-   else
-    thrownew ArgsException (
-    String.format("Argument: %c hasinvalidformat:
-    %s.",
-    elementId,elementTail));
-  }
-  private voidvalidateSchemaElementId(charelementId) throws ArgsException {
-   if (!Character.isLetter(elementId)){
-    thrownew ArgsException (
-    "Badcharacter:"+elementId+"inArgsformat
-    :"+schema);
-   }
-  }
-  ...
-  private voidparseElement(charargChar)throws
-  ArgsException {
-   if (setArgument(argChar))
-    argsFound.add(argChar);
-   else {
-    unexpectedArguments.add(argChar);
-    errorCode= ArgsException
-    .ErrorCode.UNEXPECTED_ARGUMENT;
-    valid=false;
-   }
-  }
-  ...
-  private classStringArgumentMarshalerimplementsArgumentMarshaler
-  {
-   privateStringstringValue="";
-   public voidset(Iterator&lt;String&gt;currentArgument) throws ArgsException{
-    try {
-     stringValue=currentArgument.next();
-    }catch (NoSuchElementExceptione){
-     errorCode= ArgsException
-     .ErrorCode.MISSING_STRING;
-     thrownewArgsException();
+  - - - public class Args{
+    ...
+    private charerrorArgumentId = '\0';
+    privateStringerrorParameter = "TILT";
+    private ArgsException. ErrorCode errorCode = ArgsException. ErrorCode.OK;
+    privateList&lt;String&gt;argsList;
+    publicArgs(String schema, String[] args)throws
+    ArgsException {
+      this.schema = schema;
+      argsList = Arrays.asList(args);
+      valid = parse();
     }
-   }
-   publicObjectget(){
-    returnstringValue;
-   }
-  }
-  private classIntegerArgumentMarshalerimplementsArgumentMarshaler
-  {
-   private intintValue=0;
-   public voidset(Iterator&lt;String&gt;currentArgument) throws ArgsException {
-    String parameter=null;
-    try {
-     parameter=currentArgument.next();
-     intValue=Integer.parseInt(parameter);
-    }catch (NoSuchElementExceptione){
-     errorCode=ArgsException.ErrorCode.MISSING_INTEGER;
-     thrownew ArgsException ();
-    }catch (NumberFormatExceptione){
-     errorParameter=parameter;
-     errorCode= ArgsException
-     .ErrorCode.INVALID_INTEGER;
-     thrownew ArgsException ();
+    private booleanparse()throws ArgsException{
+      if (schema.length() = = 0 &amp; &amp; argsList.size() = = 0)
+      return true;
+      parseSchema();
+      try {
+        parseArguments();
+      }catch ( ArgsException e){
+      }
+      returnvalid;
     }
-   }
-   publicObjectget(){
-    returnintValue;
-   }
-  }
-  private classDoubleArgumentMarshalerimplementsArgumentMarshaler
-  {
-   private doubledoubleValue=0;
-   public voidset(Iterator&lt;String&gt;currentArgument) throws ArgsException{
-    String parameter=null;
-    try {
-     parameter=currentArgument.next();
-     doubleValue=Double.parseDouble(parameter);
-    }catch (NoSuchElementExceptione){
-     errorCode= ArgsException
-     .ErrorCode.MISSING_DOUBLE;
-     thrownewArgsException();
-    }catch (NumberFormatExceptione){
-     errorParameter=parameter;
-     errorCode= ArgsException
-     .ErrorCode.INVALID_DOUBLE;
-     thrownewArgsException();
+    private booleanparseSchema()throws ArgsException {
+      ...
     }
-   }
-   publicObjectget(){
-    returndoubleValue;
-   }
-  }
- }</code></pre>
+    private void parseSchemaElement(String element)throws
+    ArgsException {
+      ...
+      else
+      thrownew ArgsException (
+      String.format("Argument: % c hasinvalidformat: % s.",
+      elementId, elementTail));
+    }
+    private void validateSchemaElementId(char elementId) throws ArgsException {
+      if (!Character.isLetter(elementId)){
+        thrownew ArgsException (
+        "Bad character:" + elementId + "in Args format:" + schema);
+      }
+    }
+    ...
+    private voidparseElement(char argChar)throws
+    ArgsException {
+      if (setArgument(argChar))
+      argsFound.add(argChar);
+      else {
+        unexpectedArguments.add(argChar);
+        errorCode = ArgsException
+        .ErrorCode.UNEXPECTED_ARGUMENT;
+        valid = false;
+      }
+    }
+    ...
+    private classStringArgumentMarshalerimplementsArgumentMarshaler
+    {
+      privateStringstringValue = "";
+      public void set(Iterator&lt;String&gt;currentArgument) throws ArgsException{
+        try {
+          stringValue = currentArgument.next();
+        }catch (NoSuchElementException e){
+          errorCode = ArgsException
+          .ErrorCode.MISSING_STRING;
+          thrownewArgsException();
+        }
+      }
+      publicObjectget(){
+        returnstringValue;
+      }
+    }
+    private classIntegerArgumentMarshalerimplementsArgumentMarshaler
+    {
+      private intintValue = 0;
+      public void set(Iterator&lt;String&gt;currentArgument) throws ArgsException {
+        String parameter = null;
+        try {
+          parameter = currentArgument.next();
+          intValue = Integer.parseInt(parameter);
+        }catch (NoSuchElementException e){
+          errorCode = ArgsException.ErrorCode.MISSING_INTEGER;
+          thrownew ArgsException ();
+        }catch (NumberFormatException e){
+          errorParameter = parameter;
+          errorCode = ArgsException
+          .ErrorCode.INVALID_INTEGER;
+          thrownew ArgsException ();
+        }
+      }
+      publicObjectget(){
+        returnintValue;
+      }
+    }
+    private classDoubleArgumentMarshalerimplementsArgumentMarshaler
+    {
+      private doubledoubleValue = 0;
+      public void set(Iterator&lt;String&gt;currentArgument) throws ArgsException{
+        String parameter = null;
+        try {
+          parameter = currentArgument.next();
+          doubleValue = Double.parseDouble(parameter);
+        }catch (NoSuchElementException e){
+          errorCode = ArgsException
+          .ErrorCode.MISSING_DOUBLE;
+          thrownewArgsException();
+        }catch (NumberFormatException e){
+          errorParameter = parameter;
+          errorCode = ArgsException
+          .ErrorCode.INVALID_DOUBLE;
+          thrownewArgsException();
+        }
+      }
+      publicObjectget(){
+        returndoubleValue;
+      }
+    }
+  }</code></pre>
 <p>很好。现在，Args抛出的唯一一个异常是ArgsException。把ArgsException移到它自己的模块中，意味着我们能把大量杂七杂八的错误支持代码从Args模块转移到这个模块。</p>
 <p>现在我们完全把异常和错误代码从Args模块中隔离出来了。（如代码清单14-13～16所示。）为达到这一目标，大概做了30次小修改，每次修改都保持测试通过。</p>
 <p>代码清单14-13ArgsTest.java</p>
@@ -7694,281 +7619,243 @@ import junit.framework.TestCase;
 public classArgsTestextendsTestCase{
   public voidtestCreateWithNoSchemaOrArguments()throws
   Exception{
-    Argsargs=new Args("",new String[0]);
-    assertEquals(0,args.cardinality());
+    Argsargs = new Args("", new String[0]);
+    assertEquals(0, args.cardinality());
   }
   public voidtestWithNoSchemaButWithOneArgument()throws
   Exception{
     try {
-      new Args("",new String[]{"-x"});
+      new Args("", new String[]{" - x"});
       fail();
-    }catch(ArgsExceptione){
-      assertEquals(ArgsException.ErrorCode.UNEXPECTED_ARGUMENT,
-      e.getErrorCode());
-      assertEquals('x',e.getErrorArgumentId());
+    }catch (ArgsException e){
+      assertEquals(ArgsException.ErrorCode.UNEXPECTED_ARGUMENT, e.getErrorCode());
+      assertEquals('x', e.getErrorArgumentId());
     }
   }
   public voidtestWithNoSchemaButWithMultipleArguments() throws Exception{
     try {
-      new Args("",new String[]{"-x","-y"});
+      new Args("", new String[]{" - x", " - y"});
       fail();
-    }catch(ArgsExceptione){
-      assertEquals(ArgsException.ErrorCode.UNEXPECTED_ARGUMENT,
-      e.getErrorCode());
-      assertEquals('x',e.getErrorArgumentId());
+    }catch (ArgsException e){
+      assertEquals(ArgsException.ErrorCode.UNEXPECTED_ARGUMENT, e.getErrorCode());
+      assertEquals('x', e.getErrorArgumentId());
     }
   }
   public voidtestNonLetterSchema()throws Exception{
     try {
-      new Args("*",new String[]{});
-      fail("Argsconstructorshouldhavethrownexception
-      ");
-    }catch(ArgsExceptione){
-      assertEquals(ArgsException.ErrorCode.INVALID_ARGUMENT_NAME,
-      e.getErrorCode());
-      assertEquals('*',e.getErrorArgumentId());
+      new Args(" * ", new String[]{});
+      fail("Argsconstructorshouldhavethrownexception");
+    }catch (ArgsException e){
+      assertEquals(ArgsException.ErrorCode.INVALID_ARGUMENT_NAME, e.getErrorCode());
+      assertEquals(' * ', e.getErrorArgumentId());
     }
   }
   public voidtestInvalidArgumentFormat()throws
   Exception{
     try {
-      new Args("f~",new String[]{});
-      fail("Argsconstructorshouldhavethrowsexception
-      ");
-    }catch(ArgsExceptione){
-      assertEquals(ArgsException.ErrorCode.INVALID_FORMAT,
-      e.getErrorCode());
-      assertEquals('f',e.getErrorArgumentId());
+      new Args("f~", new String[]{});
+      fail("Argsconstructorshouldhavethrowsexception");
+    }catch (ArgsException e){
+      assertEquals(ArgsException.ErrorCode.INVALID_FORMAT, e.getErrorCode());
+      assertEquals('f', e.getErrorArgumentId());
     }
   }
   public voidtestSimpleBooleanPresent()throws Exception {
-    Argsargs=new Args("x",new String[]{"-x"});
-    assertEquals(1,args.cardinality());
-    assertEquals(true,args.getBoolean('x'));
+    Argsargs = new Args("x", new String[]{" - x"});
+    assertEquals(1, args.cardinality());
+    assertEquals(true, args.getBoolean('x'));
   }
   public voidtestSimpleStringPresent()throws Exception {
-    Argsargs=new Args("x*",new String[]{"-
-    x","param"});
-    assertEquals(1,args.cardinality());
+    Argsargs = new Args("x * ", new String[]{" - x", "param"});
+    assertEquals(1, args.cardinality());
     assertTrue(args.has('x'));
-    assertEquals("param",args.getString('x'));
+    assertEquals("param", args.getString('x'));
   }
   public voidtestMissingStringArgument()throws
   Exception{
     try {
-      new Args("x*",new String[]{"-x"});
+      new Args("x * ", new String[]{" - x"});
       fail();
-    }catch(ArgsExceptione){
-      assertEquals(ArgsException.ErrorCode.MISSING_STRING,
-      e.getErrorCode());
-      assertEquals('x',e.getErrorArgumentId());
+    }catch (ArgsException e){
+      assertEquals(ArgsException.ErrorCode.MISSING_STRING, e.getErrorCode());
+      assertEquals('x', e.getErrorArgumentId());
     }
   }
   public voidtestSpacesInFormat()throws Exception{
-    Argsargs=new Args("x,y",new String[]{"-xy"});
-    assertEquals(2,args.cardinality());
+    Argsargs = new Args("x, y", new String[]{" - xy"});
+    assertEquals(2, args.cardinality());
     assertTrue(args.has('x'));
     assertTrue(args.has('y'));
   }
   public voidtestSimpleIntPresent()throws Exception{
-    Argsargs=new Args("x#",new String[]{"-
-    x","42"});
-    assertEquals(1,args.cardinality());
+    Argsargs = new Args("x#", new String[]{" - x", "42"});
+    assertEquals(1, args.cardinality());
     assertTrue(args.has('x'));
-    assertEquals(42,args.getInt('x'));
+    assertEquals(42, args.getInt('x'));
   }
   public voidtestInvalidInteger()throws Exception{
     try {
-      new Args("x#",new String[]{"-x","Fortytwo"});
+      new Args("x#", new String[]{" - x", "Fortytwo"});
       fail();
-    }catch(ArgsExceptione){
-      assertEquals(ArgsException.ErrorCode.INVALID_INTEGER,
-      e.getErrorCode());
-      assertEquals('x',e.getErrorArgumentId());
-      assertEquals("Fortytwo",e.getErrorParameter());
+    }catch (ArgsException e){
+      assertEquals(ArgsException.ErrorCode.INVALID_INTEGER, e.getErrorCode());
+      assertEquals('x', e.getErrorArgumentId());
+      assertEquals("Fortytwo", e.getErrorParameter());
     }
   }
   public voidtestMissingInteger()throws Exception{
     try {
-      new Args("x#",new String[]{"-x"});
+      new Args("x#", new String[]{" - x"});
       fail();
-    }catch(ArgsExceptione){
-      assertEquals(ArgsException.ErrorCode.MISSING_INTEGER,
-      e.getErrorCode());
-      assertEquals('x',e.getErrorArgumentId());
+    }catch (ArgsException e){
+      assertEquals(ArgsException.ErrorCode.MISSING_INTEGER, e.getErrorCode());
+      assertEquals('x', e.getErrorArgumentId());
     }
   }
   public voidtestSimpleDoublePresent()throws Exception {
-    Argsargs=new Args("x##",new String[]{"-
-    x","42.3"});
-    assertEquals(1,args.cardinality());
+    Argsargs = new Args("x##", new String[]{" - x", "42.3"});
+    assertEquals(1, args.cardinality());
     assertTrue(args.has('x'));
-    assertEquals(42.3,args.getDouble('x'),.001);
+    assertEquals(42.3, args.getDouble('x'), .001);
   }
   public voidtestInvalidDouble()throws Exception{
     try {
-      new Args("x##",new String[]{"-x","Fortytwo"});
+      new Args("x##", new String[]{" - x", "Fortytwo"});
       fail();
-    }catch(ArgsExceptione){
-      assertEquals(ArgsException.ErrorCode.INVALID_DOUBLE,
-      e.getErrorCode());
-      assertEquals('x',e.getErrorArgumentId());
-      assertEquals("Fortytwo",e.getErrorParameter());
+    }catch (ArgsException e){
+      assertEquals(ArgsException.ErrorCode.INVALID_DOUBLE, e.getErrorCode());
+      assertEquals('x', e.getErrorArgumentId());
+      assertEquals("Fortytwo", e.getErrorParameter());
     }
   }
   public voidtestMissingDouble()throws Exception{
     try {
-      new Args("x##",new String[]{"-x"});
+      new Args("x##", new String[]{" - x"});
       fail();
-    }catch(ArgsExceptione){
-      assertEquals(ArgsException.ErrorCode.MISSING_DOUBLE,
-      e.getErrorCode());
-      assertEquals('x',e.getErrorArgumentId());
+    }catch (ArgsException e){
+      assertEquals(ArgsException.ErrorCode.MISSING_DOUBLE, e.getErrorCode());
+      assertEquals('x', e.getErrorArgumentId());
     }
   }
 }</code></pre>
 <p>代码清单14-14ArgsExceptionTest.java</p>
 <pre class="code-block"><code class="language-java">public classArgsExceptionTestextendsTestCase{
   public voidtestUnexpectedMessage()throws Exception{
-    ArgsExceptione= new
-    ArgsException(ArgsException.ErrorCode.UNEXPECTED_ARGUMENT,
-    'x',null);
-    assertEquals("Argument-xunexpected.",
-    e.errorMessage());
+    ArgsException e = new
+    ArgsException(ArgsException.ErrorCode.UNEXPECTED_ARGUMENT, 'x', null);
+    assertEquals("Argument - xunexpected.", e.errorMessage());
   }
   public voidtestMissingStringMessage()throws Exception {
-    ArgsExceptione=new
-    ArgsException(ArgsException.ErrorCode.MISSING_STRING,
-    'x', null);
-    assertEquals("Couldnotfindstringparameterfor-
-    x.",e.errorMessage());
+    ArgsException e = new
+    ArgsException(ArgsException.ErrorCode.MISSING_STRING, 'x', null);
+    assertEquals("Could not find string parameter for - x.", e.errorMessage());
   }
   public voidtestInvalidIntegerMessage()throws
   Exception{
-    ArgsExceptione= new
-    ArgsException(ArgsException.ErrorCode.INVALID_INTEGER,
-    'x', "Fortytwo");
-    assertEquals("Argument-xexpectsanintegerbutwas
-    'Fortytwo'.",
+    ArgsException e = new
+    ArgsException(ArgsException.ErrorCode.INVALID_INTEGER, 'x', "Fortytwo");
+    assertEquals("Argument - xexpectsanintegerbutwas'Fortytwo'.",
     e.errorMessage());
   }
   public voidtestMissingIntegerMessage()throws
   Exception{
-    ArgsExceptione=new
-    ArgsException(ArgsException.ErrorCode.MISSING_INTEGER,
-    'x',null);
-    assertEquals("Couldnotfindintegerparameterfor-
-    x.",e.errorMessage());
+    ArgsException e = new
+    ArgsException(ArgsException.ErrorCode.MISSING_INTEGER, 'x', null);
+    assertEquals("Could not find integer parameter for - x.", e.errorMessage());
   }
   public voidtestInvalidDoubleMessage()throws Exception {
-    ArgsExceptione=new
-    ArgsException(ArgsException.ErrorCode.INVALID_DOUBLE,
-    'x', "Fortytwo
+    ArgsException e = new
+    ArgsException(ArgsException.ErrorCode.INVALID_DOUBLE, 'x', "Fortytwo
     ");
-    assertEquals("Argument-xexpectsadoublebutwas
-    'Fortytwo'.",
+    assertEquals("Argument - xexpectsadoublebutwas'Fortytwo'.",
     e.errorMessage());
   }
   public voidtestMissingDoubleMessage()throws Exception {
-    ArgsExceptione=new
-    ArgsException(ArgsException.ErrorCode.MISSING_DOUBLE,
-    'x', null);
-    assertEquals("Couldnotfinddoubleparameterfor-
-    x.",e.errorMessage());
+    ArgsException e = new
+    ArgsException(ArgsException.ErrorCode.MISSING_DOUBLE, 'x', null);
+    assertEquals("Could not find double parameter for - x.", e.errorMessage());
   }
 }</code></pre>
 <p>代码清单14-15ArgsException.java</p>
 <pre class="code-block"><code class="language-java">public classArgsExceptionextendsException{
-  private charerrorArgumentId='\0';
-  privateStringerrorParameter="TILT";
-  privateErrorCodeerrorCode=ErrorCode.OK;
+  private charerrorArgumentId = '\0';
+  privateStringerrorParameter = "TILT";
+  privateErrorCodeerrorCode = ErrorCode.OK;
   publicArgsException(){}
-  publicArgsException(Stringmessage){super(message);}
-  publicArgsException(ErrorCodeerrorCode){
-    this.errorCode=errorCode;
+  publicArgsException(String message){super(message);}
+  publicArgsException(ErrorCode errorCode){
+    this.errorCode = errorCode;
   }
-  publicArgsException(ErrorCodeerrorCode,StringerrorParameter
+  publicArgsException(ErrorCode errorCode, StringerrorParameter
   ){
-    this.errorCode=errorCode;
-    this.errorParameter=errorParameter;
+    this.errorCode = errorCode;
+    this.errorParameter = errorParameter;
   }
-  publicArgsException(ErrorCodeerrorCode,char
-  errorArgumentId,
-  String errorParameter){
-    this.errorCode=errorCode;
-    this.errorParameter=errorParameter;
-    this.errorArgumentId=errorArgumentId;
+  publicArgsException(ErrorCode errorCode, char
+  errorArgumentId, String errorParameter){
+    this.errorCode = errorCode;
+    this.errorParameter = errorParameter;
+    this.errorArgumentId = errorArgumentId;
   }
-  public chargetErrorArgumentId(){
+  public char getErrorArgumentId(){
     returnerrorArgumentId;
   }
-  public voidsetErrorArgumentId(charerrorArgumentId){
-    this.errorArgumentId=errorArgumentId;
+  public void setErrorArgumentId(charerrorArgumentId){
+    this.errorArgumentId = errorArgumentId;
   }
   publicStringgetErrorParameter(){
     returnerrorParameter;
   }
-  public voidsetErrorParameter(StringerrorParameter){
-    this.errorParameter=errorParameter;
+  public void setErrorParameter(StringerrorParameter){
+    this.errorParameter = errorParameter;
   }
   publicErrorCodegetErrorCode(){
     returnerrorCode;
   }
-  public voidsetErrorCode(ErrorCodeerrorCode){
-    this.errorCode=errorCode;
+  public void setErrorCode(ErrorCode errorCode){
+    this.errorCode = errorCode;
   }
   publicStringerrorMessage()throws Exception{
     switch (errorCode){
       case OK:
-      thrownewException("TILT:Shouldnotgethere
-      .");
+      thrownewException("TILT: Should not get here.");
       case UNEXPECTED_ARGUMENT:
-      returnString.format("Argument-%cunexpected.",
-      errorArgumentId);
+      returnString.format("Argument - % c unexpected.", errorArgumentId);
       case MISSING_STRING:
-      returnString.format("Couldnotfindstringparameterfor
-      -%c.",
+      returnString.format("Could not find string parameter for - % c.",
       errorArgumentId);
       case INVALID_INTEGER:
-      returnString.format("Argument-%cexpectsanintegerbutwas
-      '%s'.",
-      errorArgumentId,
-      errorParameter);
+      returnString.format("Argument - % c expects an integer but was' % s'.",
+      errorArgumentId, errorParameter);
       case MISSING_INTEGER:
-      returnString.format("Couldnotfindintegerparameterfor
-      -%c.",
+      returnString.format("Could not find integer parameter for - % c.",
       errorArgumentId);
       case INVALID_DOUBLE:
-      returnString.format("Argument-%cexpectsadoublebutwas
-      '%s'.",
-      errorArgumentId,
-      errorParameter);
+      returnString.format("Argument - % c expects a double but was' % s'.",
+      errorArgumentId, errorParameter);
       case MISSING_DOUBLE:
-      returnString.format("Couldnotfinddoubleparameterfor
-      -%c.",
+      returnString.format("Could not find double parameter for - % c.",
       errorArgumentId);
     }
     return"";
   }
   public enumErrorCode{
-    OK,INVALID_FORMAT,UNEXPECTED_ARGUMENT,
-    INVALID_ARGUMENT_NAME,
-    MISSING_STRING,
-    MISSING_INTEGER,INVALID_INTEGER,
-    MISSING_DOUBLE,INVALID_DOUBLE}
+    OK, INVALID_FORMAT, UNEXPECTED_ARGUMENT, INVALID_ARGUMENT_NAME,
+    MISSING_STRING, MISSING_INTEGER, INVALID_INTEGER,
+    MISSING_DOUBLE, INVALID_DOUBLE}
   }</code></pre>
 <p>代码清单14-16Args.java</p>
-<pre class="code-block"><code class="language-java">public classArgs{
+<pre class="code-block"><code class="language-java">public class Args{
   privateStringschema;
-  privateMap&lt;Character,ArgumentMarshaler&gt;marshalers= new HashMap&lt;Character,ArgumentMarshaler&gt;();
-  privateSet&lt;Character&gt;argsFound=new
+  privateMap&lt;Character,ArgumentMarshaler&gt;marshalers = new HashMap&lt;Character,ArgumentMarshaler&gt;();
+  privateSet&lt;Character&gt;argsFound = new
   HashSet&lt;Character&gt;();
   privateIterator&lt;String&gt;currentArgument;
   privateList&lt;String&gt;argsList;
-  publicArgs(Stringschema,String[]args)throws
+  publicArgs(String schema, String[] args)throws
   ArgsException{
-    this.schema=schema;
-    argsList=Arrays.asList(args);
+    this.schema = schema;
+    argsList = Arrays.asList(args);
     parse();
   }
   private voidparse()throws ArgsException{
@@ -7976,57 +7863,55 @@ public classArgsTestextendsTestCase{
     parseArguments();
   }
   private booleanparseSchema()throws ArgsException{
-    for (Stringelement:schema.split(",")){
-      if (element.length()&gt;0){
+    for (String element:schema.split(", ")){
+      if (element.length() &gt; 0){
         parseSchemaElement(element.trim());
       }
     }
     return true;
   }
-  private voidparseSchemaElement(Stringelement)throws
+  private void parseSchemaElement(String element)throws
   ArgsException{
-    charelementId=element.charAt(0);
-    StringelementTail=element.substring(1);
+    char elementId = element.charAt(0);
+    String elementTail = element.substring(1);
     validateSchemaElementId(elementId);
-    if (elementTail.length()==0)
-      marshalers.put(elementId,new
-      BooleanArgumentMarshaler());
-    elseif(elementTail.equals("*"))
-    marshalers.put(elementId,new
+    if (elementTail.length() = = 0)
+    marshalers.put(elementId, new
+    BooleanArgumentMarshaler());
+    else if (elementTail.equals(" * "))
+    marshalers.put(elementId, new
     StringArgumentMarshaler());
-    elseif(elementTail.equals("#"))
-    marshalers.put(elementId,new
+    else if (elementTail.equals("#"))
+    marshalers.put(elementId, new
     IntegerArgumentMarshaler());
-    elseif(elementTail.equals("##"))
-    marshalers.put(elementId,new
+    else if (elementTail.equals("##"))
+    marshalers.put(elementId, new
     DoubleArgumentMarshaler());
     else
-      thrownewArgsException
-      (ArgsException.ErrorCode.INVALID_FORMAT,
-      elementId, elementTail);
+    thrownewArgsException
+    (ArgsException.ErrorCode.INVALID_FORMAT, elementId, elementTail);
   }
-  private voidvalidateSchemaElementId(charelementId) throws ArgsException{
+  private void validateSchemaElementId(char elementId) throws ArgsException{
     if (!Character.isLetter(elementId)){
       thrownewArgsException
-      (ArgsException.ErrorCode.INVALID_ARGUMENT_NAME,
-      elementId, null);
+      (ArgsException.ErrorCode.INVALID_ARGUMENT_NAME, elementId, null);
     }
   }
   private voidparseArguments()throws ArgsException{
-    for (currentArgument=argsList.iterator();
+    for (currentArgument = argsList.iterator();
     currentArgument.hasNext();){
-      Stringarg=currentArgument.next();
+      Stringarg = currentArgument.next();
       parseArgument(arg);
     }
   }
   private voidparseArgument(Stringarg)throws
   ArgsException{
-    if (arg.startsWith("-"))
-      parseElements(arg);
+    if (arg.startsWith(" - "))
+    parseElements(arg);
   }
   private voidparseElements(Stringarg)throws
   ArgsException{
-    for (inti=1;i&lt;arg.length();i++)
+    for (int i = 1;i&lt;arg.length();i++)
       parseElement(arg.charAt(i));
   }
   private voidparseElement(charargChar)throws
@@ -8057,45 +7942,45 @@ public classArgsTestextendsTestCase{
   }
   publicStringusage(){
     if (schema.length()&gt;0)
-      return"-["+schema+"]";
+    return" - [" + schema + "]";
     else
-      return"";
+    return"";
   }
-  public booleangetBoolean(chararg){
-    ArgumentMarshaleram=marshalers.get(arg);
-    booleanb=false;
+  public boolean getBoolean(chararg){
+    ArgumentMarshaler am = marshalers.get(arg);
+    booleanb = false;
     try {
-      b=am!=null&amp;&amp;(Boolean)am.get();
+      b = am ! = null &amp; &amp; (Boolean)am.get();
     }catch (ClassCastExceptione){
-      b=false;
+      b = false;
     }
     returnb;
   }
   publicStringgetString(chararg){
-    ArgumentMarshaleram=marshalers.get(arg);
+    ArgumentMarshaler am = marshalers.get(arg);
     try {
-      returnam==null?"":(String)am.get();
+      returnam = = null?"":(String)am.get();
     }catch (ClassCastExceptione){
       return"";
     }
   }
-  public intgetInt(chararg){
-    ArgumentMarshaleram=marshalers.get(arg);
+  public int getInt(chararg){
+    ArgumentMarshaler am = marshalers.get(arg);
     try {
-      returnam==null?0:(Integer)am.get();
-    }catch (Exceptione){
+      returnam = = null?0:(Integer)am.get();
+    }catch (Exception e){
       return0;
     }
   }
-  public doublegetDouble(chararg){
-    ArgumentMarshaleram=marshalers.get(arg);
+  public double getDouble(chararg){
+    ArgumentMarshaler am = marshalers.get(arg);
     try {
-      returnam==null?0:(Double)am.get();
-    }catch (Exceptione){
+      returnam = = null?0:(Double)am.get();
+    }catch (Exception e){
       return0.0;
     }
   }
-  public booleanhas(chararg){
+  public boolean has(chararg){
     returnargsFound.contains(arg);
   }
 }</code></pre>
