@@ -7167,15 +7167,11 @@ public class Args {
   private String schema;
   private String[] args;
   private boolean valid = true;
-  private Set&lt;Character&gt; unexpectedArguments = new TreeSet&lt;Character
-  &gt;();
+  private Set&lt;Character&gt; unexpectedArguments = new TreeSet&lt;Character&gt;();
   private Map&lt;Character, Boolean&gt; booleanArgs = new HashMap&lt;Character, Boolean&gt;();
-  private Map&lt;Character, String&gt; stringArgs = new HashMap&lt;Character
-  , String&gt;();
-  private Map&lt;Character, Integer&gt; intArgs = new HashMap&lt;Character
-  , Integer&gt;();
-  private Set&lt;Character&gt; argsFound = new HashSet&lt;Character&gt;
-  ();
+  private Map&lt;Character, String&gt; stringArgs = new HashMap&lt;Character, String&gt;();
+  private Map&lt;Character, Integer&gt; intArgs = new HashMap&lt;Character, Integer&gt;();
+  private Set&lt;Character&gt; argsFound = new HashSet&lt;Character&gt;();
   private int currentArgument;
   private char errorArgumentId = '\0';
   private String errorParameter = "TILT";
@@ -7190,7 +7186,7 @@ public class Args {
     }
     private boolean parse() throws ParseException {
       if (schema.length() = = 0 &amp; &amp; args.length = = 0)
-      return true;
+        return true;
       parseSchema();
       try {
         parseArguments();
@@ -7212,9 +7208,9 @@ public class Args {
       String elementTail = element.substring(1);
       validateSchemaElementId(elementId);
       if (isBooleanSchemaElement(elementTail))
-      parseBooleanSchemaElement(elementId);
+        parseBooleanSchemaElement(elementId);
       else if (isStringSchemaElement(elementTail))
-      parseStringSchemaElement(elementId);
+        parseStringSchemaElement(elementId);
       else if (isIntegerSchemaElement(elementTail)) {
         parseIntegerSchemaElement(elementId);
       } else {
@@ -7223,12 +7219,9 @@ public class Args {
         elementId, elementTail), 0);
       }
     }
-    private void validateSchemaElementId(char elementId) throws
-    ParseException {
+    private void validateSchemaElementId(char elementId) throws ParseException {
       if (!Character.isLetter(elementId)) {
-        throw new ParseException(
-        "Bad character:" + elementId + "in Args format: " + schema
-        , 0);
+        throw new ParseException("Bad character:" + elementId + "in Args format: " + schema, 0);
       }
     }
     private void parseBooleanSchemaElement(char elementId) {
@@ -7250,8 +7243,7 @@ public class Args {
       return elementTail.equals("#");
     }
     private boolean parseArguments() throws ArgsException {
-      for (currentArgument = 0; currentArgument &lt; args.length; currentArgument
-      + + ) {
+      for (currentArgument = 0; currentArgument &lt; args.length; currentArgument++ ) {
         String arg = args[currentArgument];
         parseArgument(arg);
       }
@@ -7259,7 +7251,7 @@ public class Args {
     }
     private void parseArgument(String arg) throws ArgsException {
       if (arg.startsWith(" - "))
-      parseElements(arg);
+        parseElements(arg);
     }
     private void parseElements(String arg) throws ArgsException {
       for (int i = 1; i &lt; arg.length(); i++)
@@ -7285,8 +7277,9 @@ public class Args {
         return false;
       return true;
     }
-    private boolean isIntArg(char argChar) {return intArgs.containsKey
-    (argChar);}
+    private boolean isIntArg(char argChar) {
+        return intArgs.containsKey(argChar);
+    }
     private void setIntArg(char argChar) throws ArgsException {
       currentArgument++;
       String parameter = null;
@@ -7331,25 +7324,22 @@ public class Args {
     }
     public String usage() {
       if (schema.length() &gt; 0)
-      return " - [" + schema + "]";
+        return " - [" + schema + "]";
       else
-      return "";
+        return "";
     }
     public String errorMessage() throws Exception {
       switch (errorCode) {
         case OK:
-        throw new Exception("TILT: Should not get here.");
+            throw new Exception("TILT: Should not get here.");
         case UNEXPECTED_ARGUMENT:
-        return unexpectedArgumentMessage();
+            return unexpectedArgumentMessage();
         case MISSING_STRING:
-        return String.format("Could not find string parameter for - % c.",
-        errorArgumentId);
+         return String.format("Could not find string parameter for - % c.",errorArgumentId);
         case INVALID_INTEGER:
-        return String.format("Argument - % c expects an integer but was' % s'.",
-        errorArgumentId, errorParameter);
+            return String.format("Argument - % c expects an integer but was' % s'.",errorArgumentId, errorParameter);
         case MISSING_INTEGER:
-        return String.format("Could not find integer parameter for - % c.",
-        errorArgumentId);
+            return String.format("Could not find integer parameter for - % c.",errorArgumentId);
       }
       return "";
     }
@@ -7362,13 +7352,13 @@ public class Args {
       return message.toString();
     }
     private boolean falseIfNull(Boolean b) {
-      return b ! = null &amp; &amp; b;
+      return b != null &amp; &amp; b;
     }
     private int zeroIfNull(Integer i) {
-      return i = = null ? 0 : i;
+      return i == null ? 0 : i;
     }
     private String blankIfNull(String s) {
-      return s = = null ? "" : s;
+      return s == null ? "" : s;
     }
     public String getString(char arg) {
       return blankIfNull(stringArgs.get(arg));
@@ -7404,8 +7394,7 @@ public class Args {
   private String schema;
   private String[] args;
   private boolean valid;
-  private Set&lt;Character&gt; unexpectedArguments = new TreeSet&lt;Character
-  &gt;();
+  private Set&lt;Character&gt; unexpectedArguments = new TreeSet&lt;Character&gt;();
   private Map&lt;Character, Boolean&gt; booleanArgs = new HashMap&lt;Character, Boolean&gt;();
   private int numberOfArguments = 0;
   public Args(String schema, String[] args) {
@@ -7471,9 +7460,9 @@ public class Args {
   }
   public String usage() {
     if (schema.length() &gt; 0)
-    return " - [" + schema + "]";
+        return " - [" + schema + "]";
     else
-    return "";
+        return "";
   }
   public String errorMessage() {
     if (unexpectedArguments.size() &gt; 0) {
@@ -7506,12 +7495,10 @@ public class Args {
   private String schema;
   private String[] args;
   private boolean valid = true;
-  private Set&lt;Character&gt; unexpectedArguments = new TreeSet&lt;Character
-  &gt;();
+  private Set&lt;Character&gt; unexpectedArguments = new TreeSet&lt;Character&gt;();
   private Map&lt;Character, Boolean&gt; booleanArgs = new HashMap&lt;Character, Boolean&gt;();
   private Map&lt;Character, String&gt; stringArgs = new HashMap&lt;Character, String&gt;();
-  private Set&lt;Character&gt; argsFound = new HashSet&lt;Character&gt;
-  ();
+  private Set&lt;Character&gt; argsFound = new HashSet&lt;Character&gt;();
   private int currentArgument;
   private char errorArgument = '\0';
   enum ErrorCode {
@@ -7687,19 +7674,19 @@ public class Args {
         <p>而且每次修改后，系统都要能工作。第一个修改是在烂摊子末尾添加ArgumentMarshaler的轮廓。</p>
         <p>代码清单14-11　向Args.java添加ArgumentMarshaler</p>
         <pre class="code-block"><code class="language-java">private classArgumentMarshaler{
-  private booleanbooleanValue = false;
+  private boolean booleanValue = false;
   public void setBoolean(boolean value){
     booleanValue = value;
   }
   public boolean getBoolean(){returnbooleanValue;}
 }
-private classBooleanArgumentMarshalerextendsArgumentMarshaler
+private class BooleanArgumentMarshaler extends ArgumentMarshaler
 {
 }
-private classStringArgumentMarshalerextendsArgumentMarshaler
+private class StringArgumentMarshaler extends ArgumentMarshaler
 {
 }
-private classIntegerArgumentMarshalerextendsArgumentMarshaler
+private class IntegerArgumentMarshaler extends ArgumentMarshaler
 {
 }
 }</code></pre>
@@ -7708,17 +7695,17 @@ private classIntegerArgumentMarshalerextendsArgumentMarshaler
         <pre class="code-block"><code class="language-java">privateMap&lt;Character, ArgumentMarshaler &gt;booleanArgs = new HashMap&lt;Character, ArgumentMarshaler &gt;();</code></pre>
         <p>这个修改影响到少数语句，我很快就修正了。</p>
         <pre class="code-block"><code class="language-java">...
-private voidparseBooleanSchemaElement(char elementId){
+private void parseBooleanSchemaElement(char elementId){
   booleanArgs.put(elementId, new BooleanArgumentMarshaler()
   );
 }
 ...
-private voidsetBooleanArg(char argChar, boolean value) {
-  booleanArgs. get (argChar). setBoolean (value);
+private void setBooleanArg(char argChar, boolean value) {
+  booleanArgs.get(argChar).setBoolean(value);
 }
 ...
 public boolean getBoolean(chararg){
-  returnfalseIfNull(booleanArgs.get(arg). getBoolean() );
+  return falseIfNull(booleanArgs.get(arg). getBoolean() );
 }</code></pre>
         <p>
             注意，这些修改正是在我之前提到的那些区域之内所做的：参数类型的parse、set和get操作。不幸的是，即便修改如此细微，有些测试还是会失败。仔细看getBoolean，可以看到如果用y去调用、而并没有y这个参数，则booleanArgs.get('y')就会返回null值，函数将抛出一个NullPointerException异常。函数falseIfNull用以防止这种状况发生，但我做出的修改却导致该函数无所作为。</p>
