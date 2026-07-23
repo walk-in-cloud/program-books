@@ -7696,8 +7696,7 @@ private class IntegerArgumentMarshaler extends ArgumentMarshaler
         <p>这个修改影响到少数语句，我很快就修正了。</p>
         <pre class="code-block"><code class="language-java">...
 private void parseBooleanSchemaElement(char elementId){
-  booleanArgs.put(elementId, new BooleanArgumentMarshaler()
-  );
+  booleanArgs.put(elementId, new BooleanArgumentMarshaler());
 }
 ...
 private void setBooleanArg(char argChar, boolean value) {
@@ -7733,17 +7732,14 @@ public boolean getBoolean(chararg){
         </p>
         <pre class="code-block"><code class="language-java">privateMap&lt;Character, ArgumentMarshaler &gt;stringArgs = new HashMap&lt;Character, ArgumentMarshaler &gt;();
 ...
-private voidparseStringSchemaElement(char elementId){
-  stringArgs.put(elementId, new
-  StringArgumentMarshaler() );
+private void parseStringSchemaElement(char elementId){
+  stringArgs.put(elementId, new StringArgumentMarshaler() );
 }
 ...
-private voidsetStringArg(char argChar)throws
-ArgsException{
+private void setStringArg(char argChar) throws ArgsException{
   currentArgument + + ;
   try {
-    stringArgs. get (argChar). setString
-    (args[currentArgument]);
+    stringArgs.get (argChar).setString(args[currentArgument]);
   }catch (ArrayIndexOutOfBoundsExceptione){
     valid = false;
     errorArgumentId = argChar;
@@ -7752,14 +7748,14 @@ ArgsException{
   }
 }
 ...
-publicStringgetString(chararg){
+public String getString(chararg){
   Args.ArgumentMarshaler am = stringArgs.get(arg);
   return am = = null? "":am.getString();
 }
 ...
-private classArgumentMarshaler{
-  private booleanbooleanValue = false;
-  privateStringstringValue;
+private class ArgumentMarshaler{
+  private boolean booleanValue = false;
+  private String stringValue;
   public void setBoolean(boolean value){
     booleanValue = value;
   }
@@ -7769,8 +7765,8 @@ private classArgumentMarshaler{
   public void setString(String s){
     stringValue = s;
   }
-  publicStringgetString(){
-    returnstringValue = = null?"":stringValue;
+  public String getString(){
+    returns tringValue == null?"":stringValue;
   }
 }</code></pre>
         <p>同样，也是每次修改一个地方，持续运行测试。</p>
@@ -7780,18 +7776,16 @@ private classArgumentMarshaler{
         <p>下一步显而易见，把int参数的相关功能放到ArgumentMarshaler里面。同样，也是照方抓药。</p>
         <pre class="code-block"><code class="language-java">privateMap&lt;Character, ArgumentMarshaler&gt; intArgs = new HashMap&lt;Character, ArgumentMarshaler&gt; ();
 ...
-private voidparseIntegerSchemaElement(char elementId){
+private void parseIntegerSchemaElement(char elementId){
   intArgs.put(elementId, new IntegerArgumentMarshaler() );
 }
 ...
-private voidsetIntArg(char argChar)throws
-ArgsException{
+private void setIntArg(char argChar) throws ArgsException{
   currentArgument + + ;
   String parameter = null;
   try {
     parameter = args[currentArgument];
-    intArgs. get (argChar). setInteger
-    (Integer.parseInt(parameter));
+    intArgs.get(argChar).setInteger(Integer.parseInt(parameter));
   }catch (ArrayIndexOutOfBoundsExceptione){
     valid = false;
     errorArgumentId = argChar;
@@ -7808,30 +7802,30 @@ ArgsException{
 ...
 public int getInt(chararg){
   Args.ArgumentMarshaler am = intArgs.get(arg);
-  return am = = null?0 :am.getInteger();
+  return am == null?0 :am.getInteger();
 }
 ...
 private classArgumentMarshaler{
-  private booleanbooleanValue = false;
-  privateStringstringValue;
-  private intintegerValue;
+  private boolean booleanValue = false;
+  private Strings tringValue;
+  private int integerValue;
   public void setBoolean(boolean value){
     booleanValue = value;
   }
   public boolean getBoolean(){
-    returnbooleanValue;
+    return booleanValue;
   }
   public void setString(String s){
-    stringValue = s;
+    string Value = s;
   }
   publicStringgetString(){
-    returnstringValue = = null?"":stringValue;
+    return stringValue == null?"":stringValue;
   }
   public void setInteger(int i){
     integerValue = i;
   }
   public int getInteger(){
-    returnintegerValue;
+    return integerValue;
   }
 }</code></pre>
         <p>
@@ -7844,24 +7838,24 @@ private classArgumentMarshaler{
     booleanValue = value;
   }
   public boolean getBoolean(){
-    returnbooleanValue;
+    return booleanValue;
   }
   public void setString(String s){
     stringValue = s;
   }
   publicStringgetString(){
-    returnstringValue = = null?"":stringValue;
+    return stringValue = = null?"":stringValue;
   }
   public void setInteger(int i){
     integerValue = i;
   }
   public int getInteger(){
-    returnintegerValue;
+    return integerValue;
   }
   public abstractvoidset(String s);
 }</code></pre>
         <p>然后在BooleanArgumentMarshaler中实现set方法。</p>
-        <pre class="code-block"><code class="language-java">private classBooleanArgumentMarshalerextendsArgumentMarshaler
+        <pre class="code-block"><code class="language-java">private classBooleanArgumentMarshaler extends ArgumentMarshaler
 {
   public void set(String s){
     booleanValue = true;
@@ -7869,7 +7863,7 @@ private classArgumentMarshaler{
 }</code></pre>
         <p>最后，通过调用set，替换对setBoolean的调用。</p>
         <pre class="code-block"><code class="language-java">private voidsetBooleanArg(char argChar, boolean value) {
-  booleanArgs.get(argChar). set("true");
+  booleanArgs.get(argChar).set("true");
 }</code></pre>
         <p>
             测试仍然全部通过。因为这次修改导致set函数放到了BooleanArgumentMarshaler里面，我就从ArgumentMarshaler基类删除了setBoolean方法。</p>
@@ -7884,31 +7878,30 @@ private classArgumentMarshaler{
         <p>为了编译通过，我把get函数加到ArgumentMarshaler中。</p>
         <pre class="code-block"><code class="language-java">private abstractclassArgumentMarshaler{
   ...
-  publicObjectget(){
+  public Object get(){
     return null;
   }
 }</code></pre>
         <p>这样一来，虽然可以编译，但却无法通过测试。</p>
         <p>只要将get修改为抽象方法，并在BooleanArgumentMarshaler中实现，就能重新通过测试。</p>
         <pre class="code-block"><code class="language-java">private abstractclassArgumentMarshaler{
-  protected booleanbooleanValue = false;
+  protected boolean booleanValue = false;
   ...
   public abstract Objectget();
 }
-PrivateclassBooleanArgumentMarshalerextendsArgumentMarshaler
+Private class BooleanArgumentMarshaler extends ArgumentMarshaler
 {
   public void set(String s){
     booleanValue = true;
   }
   publicObjectget(){
-    returnbooleanValue;
+    return booleanValue;
   }
 }</code></pre>
         <p>
             测试又通过了。get和set方法都已部署到BooleanArgumentMarshaler中！这样我就可以从ArgumentMarshaler里面移除旧的getBoolean函数，把受保护的booleanValue变量向下移动到BooleanArgumentMarshaler，并将其设置为private。</p>
         <p>对于String也照此办理。我修改了set和get的部署方式，删除无用的函数，并移动了变量。</p>
-        <pre class="code-block"><code class="language-java">private voidsetStringArg(char argChar)throws
-ArgsException{
+        <pre class="code-block"><code class="language-java">private voidsetStringArg(char argChar) throws ArgsException{
   currentArgument + + ;
   try {
     stringArgs.get(argChar). set (args[currentArgument]);
@@ -7916,51 +7909,51 @@ ArgsException{
     valid = false;
     errorArgumentId = argChar;
     errorCode = ErrorCode.MISSING_STRING;
-    thrownewArgsException();
+    throw new ArgsException();
   }
 }
 …
-publicStringgetString(chararg){
+public String getString(chararg){
   Args.ArgumentMarshaler am = stringArgs.get(arg);
-  returnam = = null?"": (String) am. get ();
+  return am == null?"": (String) am.get();
 }
 ...
-private abstractclassArgumentMarshaler{
-  private intintegerValue;
+private abstract class ArgumentMarshaler{
+  private int integerValue;
   public void setInteger(int i){
     integerValue = i;
   }
   public int getInteger(){
-    returnintegerValue;
+    return integerValue;
   }
   public abstractvoidset(String s);
   public abstractObjectget();
 }
-private classBooleanArgumentMarshalerextendsArgumentMarshaler
+private class BooleanArgumentMarshaler extends ArgumentMarshaler
 {
-  private booleanbooleanValue = false;
+  private boolean booleanValue = false;
   public void set(String s){
     booleanValue = true;
   }
-  publicObjectget(){
-    returnbooleanValue;
+  public Object get(){
+    return booleanValue;
   }
 }
-private classStringArgumentMarshalerextendsArgumentMarshaler
+private class StringArgumentMarshaler extends ArgumentMarshaler
 {
-  privateStringstringValue = "";
+  private StringstringValue = "";
   public void set(String s){
     stringValue = s;
   }
   publicObjectget(){
-    returnstringValue;
+    return stringValue;
   }
 }
-private classIntegerArgumentMarshalerextendsArgumentMarshaler
+private class IntegerArgumentMarshaler extends ArgumentMarshaler
 {
   public void set(String s){
   }
-  publicObjectget(){
+  public Object get(){
     return null;
   }
 }
@@ -8031,72 +8024,70 @@ private classIntegerArgumentMarshalerextendsArgumentMarshaler
   privateMap&lt;Character,ArgumentMarshaler&gt;intArgs = new HashMap&lt;Character,ArgumentMarshaler&gt;();
   privateMap&lt;Character,ArgumentMarshaler&gt;marshalers = new HashMap&lt;Character,ArgumentMarshaler&gt;() ;
   ...
-  private voidparseBooleanSchemaElement(char elementId) {
+  private void parseBooleanSchemaElement(char elementId) {
     ArgumentMarshalerm = new BooleanArgumentMarshaler();
     booleanArgs.put(elementId, m);
     marshalers.put(elementId, m);
   }
-  private voidparseIntegerSchemaElement(char elementId) {
+  private void parseIntegerSchemaElement(char elementId) {
     ArgumentMarshalerm = new IntegerArgumentMarshaler();
     intArgs.put(elementId, m);
     marshalers.put(elementId, m);
   }
-  private voidparseStringSchemaElement(char elementId) {
+  private void parseStringSchemaElement(char elementId) {
     ArgumentMarshalerm = new StringArgumentMarshaler() ;
     stringArgs.put(elementId, m);
     marshalers.put(elementId, m);
   }</code></pre>
         <p>当然，测试还是通过了。接着，我把isBooleanArg：</p>
-        <pre class="code-block"><code class="language-java">private booleanisBooleanArg(char argChar){
-  returnbooleanArgs.containsKey(argChar);
+        <pre class="code-block"><code class="language-java">private boolean isBooleanArg(char argChar){
+  return booleanArgs.containsKey(argChar);
 }</code></pre>
         <p>修改成这样：</p>
-        <pre class="code-block"><code class="language-java">private booleanisBooleanArg(char argChar){
+        <pre class="code-block"><code class="language-java">private boolean isBooleanArg(char argChar){
   ArgumentMarshalerm = marshalers.get(argChar);
-  returnminstanceofBooleanArgumentMarshaler;
+  return minstanceofBooleanArgumentMarshaler;
 }</code></pre>
         <p>测试仍然通过。于是我修改了一下isIntArg和isStringArg。</p>
         <pre class="code-block"><code class="language-java">private booleanisIntArg(char argChar){
   ArgumentMarshalerm = marshalers.get(argChar);
-  returnminstanceofIntegerArgumentMarshaler;
+  return minstanceofIntegerArgumentMarshaler;
 }
 private booleanisStringArg(char argChar){
   ArgumentMarshalerm = marshalers.get(argChar);
-  returnminstanceofStringArgumentMarshaler;
+  return minstanceofStringArgumentMarshaler;
 }</code></pre>
         <p>测试继续通过。我跟着消除了对marshaler.get的重复调用：</p>
-        <pre class="code-block"><code class="language-java">private booleansetArgument(char argChar)throws
-ArgsException{
+        <pre class="code-block"><code class="language-java">private booleansetArgument(char argChar) throws ArgsException{
   ArgumentMarshalerm = marshalers.get(argChar);
   if (isBooleanArg( m ))
-  setBooleanArg(argChar);
+    setBooleanArg(argChar);
   else if (isStringArg( m ))
-  setStringArg(argChar);
+    setStringArg(argChar);
   else if (isIntArg( m ))
-  setIntArg(argChar);
+    setIntArg(argChar);
   else
-  return false;
+    return false;
   return true;
 }
 private booleanisIntArg( ArgumentMarshalerm ){
-  returnminstanceofIntegerArgumentMarshaler;
+  return minstanceofIntegerArgumentMarshaler;
 }
 private booleanisStringArg( ArgumentMarshalerm ){
-  returnminstanceofStringArgumentMarshaler;
+  return minstanceofStringArgumentMarshaler;
 }
 private booleanisBooleanArg( ArgumentMarshalerm ){
-  returnminstanceofBooleanArgumentMarshaler;
+  return minstanceofBooleanArgumentMarshaler;
 }</code></pre>
         <p>存在三个isxxxArg方法毫无道理。所以我做了内联修改：</p>
-        <pre class="code-block"><code class="language-java">private booleansetArgument(char argChar)throws
-ArgsException {
+        <pre class="code-block"><code class="language-java">private booleansetArgument(char argChar) throws ArgsException {
   ArgumentMarshalerm = marshalers.get(argChar);
   if ( minstanceofBooleanArgumentMarshaler )
-  setBooleanArg(argChar);
+    setBooleanArg(argChar);
   else if ( minstanceofStringArgumentMarshaler )
-  setStringArg(argChar);
+    setStringArg(argChar);
   else if ( minstanceofIntegerArgumentMarshaler )
-  setIntArg(argChar);
+     setIntArg(argChar);
   else
   return false;
   return true;
@@ -8105,13 +8096,13 @@ ArgsException {
         <pre class="code-block"><code class="language-java">private boolean setArgument(char argChar) throws ArgsException {
   ArgumentMarshaler m = marshalers.get(argChar);
   if (m instanceof BooleanArgumentMarshaler)
-  setBooleanArg( m );
+    setBooleanArg( m );
   else if (m instanceof StringArgumentMarshaler)
-  setStringArg(argChar);
+    setStringArg(argChar);
   else if (m instanceof IntegerArgumentMarshaler)
-  setIntArg(argChar);
+    setIntArg(argChar);
   else
-  return false;
+    return false;
   return true;
 }
 ...
